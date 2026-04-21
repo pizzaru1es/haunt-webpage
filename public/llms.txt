@@ -1,0 +1,18 @@
+# Haunt
+
+> GPS-triggered audio tours of haunted, true crime, and historical places. Narrated like a secret shared after midnight. Coming soon to iOS.
+
+## What it is
+Step near a place and its story finds you. No screens. No maps. Just the street, and a voice that's been here longer than the buildings.
+
+## Key Pages
+- [Home](/): waitlist + product overview
+
+## Status
+- Pre-launch (waitlist open). iOS app coming soon.
+- Best experienced after dark, walking, with headphones.
+
+## Content Licensing
+- Commercial use: contact required
+- Attribution: requested
+- Training models on this site's marketing content: permitted

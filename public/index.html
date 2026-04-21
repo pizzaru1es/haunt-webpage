@@ -6,9 +6,39 @@
 <title>Haunt — Every city has stories it doesn't tell tourists</title>
 <meta name="description" content="GPS-triggered audio tours of haunted, true crime, and historical places. Narrated like a secret shared after midnight. Coming soon to iOS." />
 
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Haunt — Every city has stories it doesn't tell tourists" />
+<meta property="og:description" content="GPS-triggered audio tours of haunted, true crime, and historical places. Narrated like a secret shared after midnight." />
+<meta property="og:url" content="https://haunt-webpage.dry-waterfall-58ce.workers.dev/" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="theme-color" content="#0A0A0F" />
+
+<link rel="canonical" href="https://haunt-webpage.dry-waterfall-58ce.workers.dev/" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+<noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" /></noscript>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Haunt",
+  "url": "https://haunt-webpage.dry-waterfall-58ce.workers.dev/",
+  "description": "GPS-triggered audio tours of haunted, true crime, and historical places. Narrated like a secret shared after midnight.",
+  "sameAs": []
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Haunt",
+  "url": "https://haunt-webpage.dry-waterfall-58ce.workers.dev/"
+}
+</script>
 
 <style>
   :root {
@@ -22,7 +52,7 @@
     --amber-60:  rgba(232, 168, 71, 0.60);
     --text:      #E8E6E1;
     --dim:       #8A8A96;
-    --muted:     #55556A;
+    --muted:     #8585A8;
     --cat-haunt: #7B8EC8;
     --cat-crime: #C47B9E;
     --cat-hist:  #8BC48A;
@@ -655,14 +685,91 @@
     .section-head { margin-bottom: 52px; }
   }
 
+  /* ---------- Peek ghost (desktop-only beckon) ---------- */
+  .peek-ghost {
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    z-index: 30;
+    width: 64px;
+    height: 64px;
+    transform: translate(-50%, 100%);
+    pointer-events: none;
+    opacity: 1;
+    transition: transform 500ms cubic-bezier(0.4, 0, 0.6, 1);
+    will-change: transform;
+  }
+  .peek-ghost.is-up {
+    transform: translate(-50%, 45%);
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    animation: peekBob 3.2s ease-in-out 700ms infinite;
+  }
+  .peek-ghost.is-down {
+    transform: translate(-50%, 180%);
+    opacity: 1;
+    transition: transform 520ms cubic-bezier(0.55, 0, 0.9, 0.2);
+    animation: none;
+  }
+  /* Caught! Reveal full body, then dive past the viewport with a sway. Velocity-scaled via --bolt-* vars. */
+  .peek-ghost.is-bolting {
+    animation: peekBolt var(--bolt-dur, 720ms) cubic-bezier(0.55, 0, 0.85, 0.15) forwards;
+  }
+  @keyframes peekBolt {
+    0%   { transform: translate(-50%, 45%) rotate(0deg); }
+    14%  { transform: translate(calc(-50% + var(--bolt-sway, 6px)), -10%) rotate(-3deg); } /* full body up, slight tilt */
+    26%  { transform: translate(calc(-50% - var(--bolt-sway, 6px)), -4%) rotate(2deg); }   /* sway the other way */
+    50%  { transform: translate(-50%, 60%) rotate(-2deg); }                                 /* falling */
+    100% { transform: translate(-50%, 240%) rotate(0deg); }                                 /* gone past viewport */
+  }
+  .peek-ghost::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -8px;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 40px;
+    background: radial-gradient(ellipse at center, rgba(232,168,71,0.22) 0%, rgba(232,168,71,0) 70%);
+    filter: blur(6px);
+    opacity: 0;
+    transition: opacity 700ms ease-out;
+    pointer-events: none;
+  }
+  .peek-ghost.is-up::before,
+  .peek-ghost.is-bolting::before { opacity: 1; }
+  .peek-ghost .eye {
+    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+  @keyframes peekBob {
+    0%, 100% { transform: translate(-50%, 45%); }
+    50%      { transform: translate(-50%, 42%); }
+  }
+  @media (max-width: 640px) {
+    .peek-ghost { display: none; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .reveal { transition: none; opacity: 1; transform: none; }
     .hero-glow, .final .glow { animation: none; }
+    .peek-ghost { display: none; }
     html { scroll-behavior: auto; }
   }
 </style>
 </head>
 <body>
+
+<!-- ---------- Peek ghost (desktop-only beckon) ---------- -->
+<div class="peek-ghost" id="peek-ghost" aria-hidden="true">
+  <svg viewBox="0 0 24 24" width="64" height="64" fill="none">
+    <path d="M12 2C7.58 2 4 5.58 4 10v10.5c0 .83.67 1.5 1.5 1.5s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.5-.67 1.5-1.5V10c0-4.42-3.58-8-8-8z" fill="#E8A847" opacity="0.92"/>
+    <g id="peek-eyes">
+      <circle class="eye" id="peek-eye-l" cx="9" cy="11" r="1.5" fill="#0A0A0F"/>
+      <circle class="eye" id="peek-eye-r" cx="15" cy="11" r="1.5" fill="#0A0A0F"/>
+    </g>
+  </svg>
+</div>
+
 
 <!-- ---------- Top nav ---------- -->
 <nav class="topnav" id="topnav">
@@ -915,6 +1022,104 @@
     }
     wire('waitlist-form');
     wire('waitlist-form-2');
+  })();
+
+  // Peek ghost — rises once, tracks cursor, idle-glances, ducks out (or bolts on fast scroll)
+  (function () {
+    const ghost = document.getElementById('peek-ghost');
+    if (!ghost) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced || window.innerWidth <= 640) return;
+
+    const eyeL = document.getElementById('peek-eye-l');
+    const eyeR = document.getElementById('peek-eye-r');
+    if (!eyeL || !eyeR) return;
+
+    const MAX_X = 0.9;
+    const MAX_Y = 0.7;
+    const baseL = { x: 9,  y: 11 };
+    const baseR = { x: 15, y: 11 };
+
+    let ducked = false;
+    let lastMouseMove = Date.now();
+    let lastScrollY = window.scrollY;
+    let lastScrollAt = performance.now();
+
+    function onMove(e) {
+      if (ducked) return;
+      lastMouseMove = Date.now();
+      const rect = ghost.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const nx = Math.max(-1, Math.min(1, (e.clientX - cx) / (window.innerWidth * 0.35)));
+      const ny = Math.max(-1, Math.min(1, (e.clientY - cy) / (window.innerHeight * 0.35)));
+      setEyes(nx * MAX_X, ny * MAX_Y);
+    }
+
+    function setEyes(dx, dy) {
+      eyeL.setAttribute('cx', (baseL.x + dx).toFixed(2));
+      eyeL.setAttribute('cy', (baseL.y + dy).toFixed(2));
+      eyeR.setAttribute('cx', (baseR.x + dx).toFixed(2));
+      eyeR.setAttribute('cy', (baseR.y + dy).toFixed(2));
+    }
+
+    const glanceTargets = [
+      { x: -MAX_X, y: 0 },
+      { x:  MAX_X, y: 0 },
+      { x:  0,     y: -MAX_Y * 0.6 },
+      { x: -MAX_X * 0.6, y: MAX_Y * 0.5 },
+      { x:  0,     y: 0 },
+    ];
+    let glanceIdx = 0;
+    const idleTimer = setInterval(() => {
+      if (ducked) return;
+      if (Date.now() - lastMouseMove < 2200) return;
+      const t = glanceTargets[glanceIdx % glanceTargets.length];
+      setEyes(t.x, t.y);
+      glanceIdx++;
+    }, 1400);
+
+    function onScroll() {
+      if (ducked) return;
+      const now = performance.now();
+      const dy = window.scrollY - lastScrollY;
+      const dt = Math.max(1, now - lastScrollAt);
+      const velocity = Math.abs(dy / dt); // px per ms
+      lastScrollY = window.scrollY;
+      lastScrollAt = now;
+      if (window.scrollY > 40) duck(velocity);
+    }
+
+    function duck(velocity) {
+      if (ducked) return;
+      ducked = true;
+      ghost.classList.remove('is-up');
+      // velocity > 1.2 px/ms = a real flick. Map to bolt duration + sway distance.
+      const fast = (velocity || 0) > 0.6;
+      if (fast) {
+        // Faster scroll → tighter dive, more sway, slightly bigger reveal
+        const swayPx = Math.min(18, 6 + velocity * 4).toFixed(0) + 'px';
+        const dur    = Math.max(540, 820 - velocity * 80).toFixed(0) + 'ms';
+        ghost.style.setProperty('--bolt-sway', swayPx);
+        ghost.style.setProperty('--bolt-dur', dur);
+        ghost.classList.add('is-bolting');
+      } else {
+        ghost.classList.add('is-down');
+      }
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('scroll', onScroll);
+      clearInterval(idleTimer);
+      const cleanupDelay = fast ? 900 : 560;
+      setTimeout(() => ghost.remove(), cleanupDelay);
+    }
+
+    setTimeout(() => {
+      ghost.classList.add('is-up');
+      window.addEventListener('mousemove', onMove, { passive: true });
+      window.addEventListener('scroll', onScroll, { passive: true });
+      setTimeout(() => duck(0), 4200);
+    }, 1500);
   })();
 </script>
 
