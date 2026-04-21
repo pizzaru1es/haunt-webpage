@@ -790,8 +790,8 @@
     </p>
 
     <div class="waitlist reveal" style="--d:240ms" id="waitlist">
-      <form id="waitlist-form" novalidate>
-        <input type="email" name="email" required placeholder="your@email.com" autocomplete="email" aria-label="Email address" />
+      <form id="waitlist-form" action="https://app.kit.com/forms/9351770/subscriptions" method="POST" novalidate>
+        <input type="email" name="email_address" required placeholder="your@email.com" autocomplete="email" aria-label="Email address" />
         <button class="btn-primary" type="submit">Notify me</button>
       </form>
       <div class="success" role="status" aria-live="polite">
@@ -914,8 +914,8 @@
       <p class="sub">Leave your email. We'll knock once.</p>
 
       <div class="waitlist">
-        <form id="waitlist-form-2" novalidate>
-          <input type="email" name="email" required placeholder="your@email.com" autocomplete="email" aria-label="Email address" />
+        <form id="waitlist-form-2" action="https://app.kit.com/forms/9351770/subscriptions" method="POST" novalidate>
+          <input type="email" name="email_address" required placeholder="your@email.com" autocomplete="email" aria-label="Email address" />
           <button class="btn-primary" type="submit">Notify me</button>
         </form>
         <div class="success" role="status" aria-live="polite">
@@ -986,26 +986,47 @@
     els.forEach(el => io.observe(el));
   })();
 
-  // Waitlist forms — success state
+  // Waitlist forms — submit to Kit, show inline success
   (function () {
+    function shake(form) {
+      form.animate(
+        [{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(0)' }],
+        { duration: 260, easing: 'ease-out' }
+      );
+    }
     function wire(formId) {
       const form = document.getElementById(formId);
       if (!form) return;
       const wrap = form.closest('.waitlist');
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const input = form.querySelector('input[type="email"]');
+      const input = form.querySelector('input[type="email"]');
+      const button = form.querySelector('button[type="submit"]');
+      form.addEventListener('submit', async (e) => {
         const val = (input.value || '').trim();
         const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
         if (!ok) {
+          e.preventDefault();
           input.focus();
-          form.animate(
-            [{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(0)' }],
-            { duration: 260, easing: 'ease-out' }
-          );
+          shake(form);
           return;
         }
-        wrap.classList.add('is-success');
+        e.preventDefault();
+        button.disabled = true;
+        const originalLabel = button.textContent;
+        button.textContent = 'Sending…';
+        try {
+          const res = await fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'Accept': 'application/json' }
+          });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          wrap.classList.add('is-success');
+        } catch (err) {
+          // Fall back to native form submit (CSP allows form-action to Kit)
+          button.textContent = originalLabel;
+          button.disabled = false;
+          form.submit();
+        }
       });
     }
     wire('waitlist-form');
