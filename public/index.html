@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Haunt — Every city has stories it doesn't tell tourists</title>
+<meta name="description" content="GPS-triggered audio tours of haunted, true crime, and historical places. Narrated like a secret shared after midnight. Coming soon to iOS." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg:        #0A0A0F;
+    --surface:   #13131A;
+    --elevated:  #1C1C28;
+    --border:    #2A2A38;
+    --amber:     #E8A847;
+    --amber-13:  rgba(232, 168, 71, 0.13);
+    --amber-20:  rgba(232, 168, 71, 0.20);
+    --amber-60:  rgba(232, 168, 71, 0.60);
+    --text:      #E8E6E1;
+    --dim:       #8A8A96;
+    --muted:     #55556A;
+    --cat-haunt: #7B8EC8;
+    --cat-crime: #C47B9E;
+    --cat-hist:  #8BC48A;
+
+    --serif: "Playfair Display", "Iowan Old Style", Georgia, serif;
+    --sans:  "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono:  "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+    --r-btn: 14px;
+    --r-card: 16px;
+    --r-hero: 20px;
+
+    --maxw: 1100px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 400;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* Subtle film grain over everything (very faint) */
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.91  0 0 0 0 0.90  0 0 0 0 0.88  0 0 0 0.035 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: 0.45;
+    mix-blend-mode: overlay;
+    z-index: 999;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  img, svg { display: block; max-width: 100%; }
+  button, input { font: inherit; color: inherit; }
+
+  /* Focus */
+  :focus { outline: none; }
+  :focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* ---------- Typography primitives ---------- */
+  .eyebrow {
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .eyebrow .dot {
+    display: inline-block;
+    width: 4px; height: 4px;
+    background: var(--amber);
+    border-radius: 50%;
+    vertical-align: middle;
+    margin: 0 10px 2px;
+    opacity: 0.7;
+  }
+  .serif { font-family: var(--serif); }
+  .italic { font-style: italic; }
+  .dim { color: var(--dim); }
+  .muted { color: var(--muted); }
+
+  /* ---------- Layout ---------- */
+  .wrap {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  section {
+    padding: 120px 0;
+    position: relative;
+  }
+  section + section { border-top: 1px solid var(--border); }
+
+  .section-head {
+    text-align: center;
+    margin-bottom: 72px;
+  }
+  .section-head .eyebrow { margin-bottom: 18px; display: inline-block; }
+  .section-head h2 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(32px, 4.2vw, 52px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    max-width: 780px;
+    margin: 0 auto;
+    text-wrap: balance;
+  }
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 600ms ease-out, transform 600ms ease-out;
+    transition-delay: var(--d, 0ms);
+  }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- Navigation ---------- */
+  nav.topnav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 40;
+    transition: background-color 250ms ease, backdrop-filter 250ms ease, border-color 250ms ease;
+    border-bottom: 1px solid transparent;
+  }
+  nav.topnav .nav-inner {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 18px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  nav.topnav.scrolled {
+    background: rgba(10,10,15,0.78);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-bottom-color: var(--border);
+  }
+  .brand {
+    display: inline-flex; align-items: center; gap: 12px;
+    color: var(--text);
+  }
+  .brand .wordmark {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .nav-cta {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text);
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    transition: border-color 200ms, color 200ms, background-color 200ms;
+  }
+  .nav-cta:hover {
+    border-color: var(--amber-60);
+    color: var(--amber);
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 140px 0 96px;
+    border-top: none;
+    overflow: hidden;
+    display: flex; align-items: center;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    z-index: 0;
+    background:
+      /* bottom fade to bg */
+      linear-gradient(180deg, rgba(10,10,15,0.55) 0%, rgba(10,10,15,0.82) 55%, rgba(10,10,15,1) 100%),
+      /* placeholder "photograph" — wet cobblestone / gaslamp feel via gradients */
+      radial-gradient(ellipse at 18% 30%, rgba(60, 50, 35, 0.55), transparent 55%),
+      radial-gradient(ellipse at 82% 70%, rgba(30, 35, 55, 0.5), transparent 60%),
+      linear-gradient(160deg, #121218 0%, #0d0d14 45%, #08080d 100%);
+  }
+  /* Vertical 'window light' streaks — extremely subtle */
+  .hero-bg::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(
+        100deg,
+        transparent 0 180px,
+        rgba(232,168,71,0.018) 180px 182px,
+        transparent 182px 360px
+      );
+    mix-blend-mode: screen;
+  }
+  /* Amber lamp glow */
+  .hero-glow {
+    position: absolute;
+    width: 900px; height: 900px;
+    left: 62%; top: 8%;
+    transform: translate(-10%, -10%);
+    background: radial-gradient(circle, var(--amber-13) 0%, rgba(232,168,71,0.05) 30%, transparent 60%);
+    filter: blur(6px);
+    animation: breathe 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.75; }
+    50%      { opacity: 1.05; }
+  }
+  /* Iron-gate silhouette — bars at the bottom/sides to hint architecture without cheesy graphics */
+  .hero-gate {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 40%;
+    pointer-events: none;
+    z-index: 1;
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(10,10,15,0.9) 100%),
+      repeating-linear-gradient(90deg,
+        transparent 0 92px,
+        rgba(0,0,0,0.45) 92px 94px,
+        transparent 94px 188px);
+    mask-image: linear-gradient(180deg, transparent 0%, black 60%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 60%);
+    opacity: 0.5;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
+  .hero .eyebrow { margin-bottom: 28px; }
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(40px, 6.8vw, 80px);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    max-width: 16ch;
+    margin-bottom: 28px;
+    text-wrap: balance;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--amber);
+    font-weight: 600;
+  }
+  .hero .lede {
+    max-width: 560px;
+    color: var(--dim);
+    font-size: 20px;
+    line-height: 1.55;
+    margin-bottom: 44px;
+  }
+
+  /* ---------- Waitlist form ---------- */
+  .waitlist { max-width: 520px; }
+  .waitlist form {
+    display: flex;
+    gap: 10px;
+    padding: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-btn);
+    transition: border-color 180ms, box-shadow 180ms;
+  }
+  .waitlist form:focus-within {
+    border-color: var(--amber-60);
+    box-shadow: 0 0 0 3px rgba(232,168,71,0.12);
+  }
+  .waitlist input[type="email"] {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    padding: 14px 14px;
+    font-size: 15px;
+    color: var(--text);
+  }
+  .waitlist input[type="email"]::placeholder { color: var(--muted); }
+  .btn-primary {
+    background: var(--amber);
+    color: #15130B;
+    border: 0;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: filter 180ms, box-shadow 200ms;
+  }
+  .btn-primary:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 0 0 1px rgba(232,168,71,0.4), 0 6px 24px rgba(232,168,71,0.20);
+  }
+  .form-caption {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+
+  /* success state */
+  .waitlist .success {
+    display: none;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-btn);
+  }
+  .waitlist.is-success .success { display: flex; }
+  .waitlist.is-success form { display: none; }
+  .waitlist .success .msg {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--amber);
+  }
+
+  /* Trust row */
+  .trust {
+    margin-top: 38px;
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .trust span {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .trust .sep {
+    color: var(--muted);
+    font-size: 6px;
+    letter-spacing: 0;
+  }
+
+  /* ---------- Features grid ---------- */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .feat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 36px 32px;
+    transition: transform 300ms ease, border-color 300ms ease;
+  }
+  .feat:hover {
+    border-color: rgba(232,168,71,0.28);
+  }
+  .feat .ico {
+    width: 44px; height: 44px;
+    color: var(--amber);
+    margin-bottom: 28px;
+    opacity: 0.95;
+  }
+  .feat h3 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.2;
+    margin-bottom: 14px;
+    letter-spacing: -0.005em;
+  }
+  .feat p {
+    color: var(--dim);
+    font-size: 15.5px;
+    line-height: 1.6;
+  }
+
+  /* ---------- Cities ---------- */
+  .cities-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .city {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px 22px;
+    text-align: center;
+    min-height: 126px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px;
+    transition: border-color 220ms, transform 220ms;
+  }
+  .city:hover {
+    border-color: rgba(232,168,71,0.3);
+    transform: translateY(-2px);
+  }
+  .city .name {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+  .city .cats {
+    display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .city .cat {
+    opacity: 0.75;
+  }
+  .city .cat.haunt { color: var(--cat-haunt); }
+  .city .cat.crime { color: var(--cat-crime); }
+  .city .cat.hist  { color: var(--cat-hist); }
+  .city .cat .dot {
+    display: inline-block; width: 4px; height: 4px; border-radius: 50%;
+    background: currentColor; margin: 0 6px 2px 0; vertical-align: middle;
+  }
+
+  .coming-later {
+    margin-top: 40px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    max-width: 820px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .coming-later .label { color: var(--muted); margin-right: 8px; }
+
+  /* ---------- Narrator section ---------- */
+  .narrator {
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .narrator .eyebrow { display: inline-block; margin-bottom: 32px; }
+  .narrator blockquote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(22px, 2.6vw, 30px);
+    line-height: 1.35;
+    color: var(--text);
+    max-width: 640px;
+    margin: 0 auto;
+    letter-spacing: -0.005em;
+  }
+  .narrator blockquote .attrib {
+    display: block;
+    margin-top: 22px;
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .narrator .body {
+    margin-top: 48px;
+    color: var(--dim);
+    font-size: 16.5px;
+    line-height: 1.7;
+    text-align: left;
+  }
+  .narrator .body em { color: var(--amber); font-style: italic; font-family: var(--serif); font-size: 17.5px; }
+
+  /* ornamental divider */
+  .rule {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    margin: 0 auto 36px;
+    color: var(--border);
+  }
+  .rule::before, .rule::after {
+    content: ""; height: 1px; width: 60px; background: var(--border);
+  }
+  .rule .diamond {
+    width: 6px; height: 6px; background: var(--amber); transform: rotate(45deg); opacity: 0.7;
+  }
+
+  /* ---------- Pricing ---------- */
+  .pricing {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    max-width: 880px; margin: 0 auto;
+  }
+  .tier {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    padding: 36px 32px;
+    min-height: 220px;
+    display: flex; flex-direction: column;
+  }
+  .tier.pro {
+    background: linear-gradient(180deg, rgba(232,168,71,0.04) 0%, var(--surface) 60%);
+    border-color: rgba(232,168,71,0.35);
+    box-shadow: 0 0 40px rgba(232,168,71,0.06), inset 0 0 0 1px rgba(232,168,71,0.04);
+  }
+  .tier .tier-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 14px;
+  }
+  .tier.pro .tier-label { color: var(--amber); }
+  .tier h3 {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .tier p {
+    color: var(--dim);
+    font-size: 15.5px;
+    line-height: 1.65;
+  }
+  .tier .price-hint {
+    margin-top: auto;
+    padding-top: 28px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .tier.pro .price-hint { color: var(--amber-60); }
+
+  /* ---------- Final CTA ---------- */
+  .final {
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .final .glow {
+    position: absolute;
+    width: 1100px; height: 1100px;
+    left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: radial-gradient(circle, var(--amber-13) 0%, rgba(232,168,71,0.05) 25%, transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+    animation: breathe 6s ease-in-out infinite;
+  }
+  .final .inner {
+    position: relative; z-index: 1;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+  .final .ghost-lg { margin: 0 auto 28px; }
+  .final h2 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(40px, 5.2vw, 60px);
+    line-height: 1.1;
+    letter-spacing: -0.012em;
+    margin-bottom: 18px;
+    text-wrap: balance;
+  }
+  .final .sub {
+    color: var(--dim);
+    font-size: 18px;
+    line-height: 1.55;
+    max-width: 480px;
+    margin: 0 auto 36px;
+  }
+  .final .waitlist { margin: 0 auto 22px; }
+  .final .platform {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .final .platform .sep { opacity: 0.5; margin: 0 8px; }
+
+  /* ---------- Footer ---------- */
+  footer {
+    padding: 64px 0 72px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  footer .brand { justify-content: center; margin-bottom: 22px; }
+  footer .links {
+    display: flex; gap: 22px; justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  footer .links a { color: var(--dim); transition: color 180ms; }
+  footer .links a:hover { color: var(--amber); }
+  footer .links .sep { color: var(--muted); }
+  footer .copy {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 960px) {
+    section { padding: 88px 0; }
+    .features { grid-template-columns: 1fr; }
+    .cities-grid { grid-template-columns: repeat(2, 1fr); }
+    .pricing { grid-template-columns: 1fr; }
+    .hero { min-height: auto; padding: 130px 0 80px; }
+    .narrator .body { text-align: center; }
+  }
+  @media (max-width: 640px) {
+    .wrap { padding: 0 22px; }
+    nav.topnav .nav-inner { padding: 14px 22px; }
+    .hero h1 { font-size: 40px; }
+    .hero .lede { font-size: 17px; }
+    .waitlist form { flex-direction: column; padding: 8px; gap: 8px; }
+    .waitlist input[type="email"] { padding: 14px 12px; }
+    .btn-primary { width: 100%; padding: 14px; }
+    .trust { gap: 14px; }
+    .trust .sep { display: none; }
+    .section-head { margin-bottom: 52px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition: none; opacity: 1; transform: none; }
+    .hero-glow, .final .glow { animation: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ---------- Top nav ---------- -->
+<nav class="topnav" id="topnav">
+  <div class="nav-inner">
+    <a href="#top" class="brand" aria-label="Haunt home">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2C7.58 2 4 5.58 4 10v10.5c0 .83.67 1.5 1.5 1.5s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.5-.67 1.5-1.5V10c0-4.42-3.58-8-8-8z" fill="#E8A847" opacity="0.9"/>
+        <circle cx="9" cy="11" r="1.5" fill="#0A0A0F"/>
+        <circle cx="15" cy="11" r="1.5" fill="#0A0A0F"/>
+      </svg>
+      <span class="wordmark">Haunt</span>
+    </a>
+    <a href="#waitlist" class="nav-cta">Join the waitlist</a>
+  </div>
+</nav>
+
+<!-- ---------- Hero ---------- -->
+<header id="top" class="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-gate" aria-hidden="true"></div>
+
+  <div class="wrap hero-inner">
+    <div class="eyebrow reveal">Coming Soon</div>
+    <h1 class="reveal" style="--d:80ms">
+      Every city has stories it doesn't tell <em>tourists</em>.
+    </h1>
+    <p class="lede reveal" style="--d:160ms">
+      Slip past the guided tours. The haunted, the criminal, the historical — told like a secret shared after midnight, by a voice that's been here longer than the buildings. Walk or drive, at your own pace.
+    </p>
+
+    <div class="waitlist reveal" style="--d:240ms" id="waitlist">
+      <form id="waitlist-form" novalidate>
+        <input type="email" name="email" required placeholder="your@email.com" autocomplete="email" aria-label="Email address" />
+        <button class="btn-primary" type="submit">Notify me</button>
+      </form>
+      <div class="success" role="status" aria-live="polite">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2C7.58 2 4 5.58 4 10v10.5c0 .83.67 1.5 1.5 1.5s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.5-.67 1.5-1.5V10c0-4.42-3.58-8-8-8z" fill="#E8A847" opacity="0.9"/>
+          <circle cx="9" cy="11" r="1.5" fill="#0A0A0F"/>
+          <circle cx="15" cy="11" r="1.5" fill="#0A0A0F"/>
+        </svg>
+        <div class="msg">We'll let you know. Good night.</div>
+      </div>
+      <div class="form-caption">No spam. One email when we launch.</div>
+    </div>
+
+    <div class="trust reveal" style="--d:320ms">
+      <span>Made for after dark</span>
+      <span class="sep">●</span>
+      <span>Walk at your own pace</span>
+      <span class="sep">●</span>
+      <span>Headphones recommended</span>
+    </div>
+  </div>
+</header>
+
+<!-- ---------- What it is ---------- -->
+<section id="what">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Wander In</div>
+      <h2>The city, but quieter. <span class="italic dim">And a little stranger.</span></h2>
+    </div>
+
+    <div class="features">
+      <article class="feat reveal">
+        <!-- compass -->
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9.2"/>
+          <path d="M15.5 8.5l-1.8 5.2-5.2 1.8 1.8-5.2z"/>
+          <circle cx="12" cy="12" r="0.9" fill="currentColor" stroke="none"/>
+        </svg>
+        <h3>The city leads</h3>
+        <p>Step near a place and its story finds you. No screens to consult. No maps to wrangle. Just the street, and a voice.</p>
+      </article>
+
+      <article class="feat reveal" style="--d:80ms">
+        <!-- moon -->
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/>
+        </svg>
+        <h3>At your pace</h3>
+        <p>Linger on a corner. Double back. Stop for a drink. The stories wait for you, and start again when you do.</p>
+      </article>
+
+      <article class="feat reveal" style="--d:160ms">
+        <!-- key -->
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="8" cy="15" r="4.2"/>
+          <path d="M11.2 12.1l9.3-9.3"/>
+          <path d="M17 6l2.5 2.5"/>
+          <path d="M14.3 8.7l2 2"/>
+        </svg>
+        <h3>A voice that knows</h3>
+        <p>One narrator threads every city. Calm, deliberate, a little inhuman. Not a tour guide — a presence that remembers.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- Cities ---------- -->
+<section id="cities">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Where It Happens</div>
+      <h2>The cities you think you know. <span class="italic dim">And the ones that know you back.</span></h2>
+    </div>
+
+    <div class="cities-grid">
+      <div class="city reveal"><div class="name">Los Angeles</div></div>
+      <div class="city reveal" style="--d:40ms"><div class="name">New Orleans</div></div>
+      <div class="city reveal" style="--d:80ms"><div class="name">Chicago</div></div>
+      <div class="city reveal" style="--d:120ms"><div class="name">Boston</div></div>
+      <div class="city reveal" style="--d:40ms"><div class="name">San Francisco</div></div>
+      <div class="city reveal" style="--d:80ms"><div class="name">Savannah</div></div>
+      <div class="city reveal" style="--d:120ms"><div class="name">Key West</div></div>
+      <div class="city reveal" style="--d:160ms"><div class="name">&amp; more</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- Narrator ---------- -->
+<section id="narrator">
+  <div class="wrap narrator">
+    <div class="eyebrow reveal">The Narrator</div>
+
+    <div class="rule reveal" aria-hidden="true"><span class="diamond"></span></div>
+
+    <blockquote class="reveal" style="--d:80ms">
+      <span class="italic">Good evening. Walk with me. There are things this street has not forgotten.</span>
+      <span class="attrib">— the narrator</span>
+    </blockquote>
+
+    <p class="body reveal" style="--d:160ms">
+      Not a tour guide. Not a historian. Someone who has been in every city long enough to know what the plaques don't say.
+    </p>
+  </div>
+</section>
+
+
+
+<!-- ---------- Final CTA ---------- -->
+<section class="final" id="join">
+  <div class="glow" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="inner reveal">
+      <svg class="ghost-lg" width="80" height="80" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2C7.58 2 4 5.58 4 10v10.5c0 .83.67 1.5 1.5 1.5s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.5-.67 1.5-1.5V10c0-4.42-3.58-8-8-8z" fill="#E8A847" opacity="0.9"/>
+        <circle cx="9" cy="11" r="1.5" fill="#0A0A0F"/>
+        <circle cx="15" cy="11" r="1.5" fill="#0A0A0F"/>
+      </svg>
+      <h2>Be first through the door.</h2>
+      <p class="sub">Leave your email. We'll knock once.</p>
+
+      <div class="waitlist">
+        <form id="waitlist-form-2" novalidate>
+          <input type="email" name="email" required placeholder="your@email.com" autocomplete="email" aria-label="Email address" />
+          <button class="btn-primary" type="submit">Notify me</button>
+        </form>
+        <div class="success" role="status" aria-live="polite">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 2C7.58 2 4 5.58 4 10v10.5c0 .83.67 1.5 1.5 1.5s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.5-.67 1.5-1.5V10c0-4.42-3.58-8-8-8z" fill="#E8A847" opacity="0.9"/>
+            <circle cx="9" cy="11" r="1.5" fill="#0A0A0F"/>
+            <circle cx="15" cy="11" r="1.5" fill="#0A0A0F"/>
+          </svg>
+          <div class="msg">We'll let you know. Good night.</div>
+        </div>
+        <div class="form-caption">No spam. One email when we launch.</div>
+      </div>
+
+      <div class="platform">Coming soon</div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- Footer ---------- -->
+<footer>
+  <div class="wrap">
+    <a href="#top" class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2C7.58 2 4 5.58 4 10v10.5c0 .83.67 1.5 1.5 1.5s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.5-.67 1.5-1.5V10c0-4.42-3.58-8-8-8z" fill="#E8A847" opacity="0.9"/>
+        <circle cx="9" cy="11" r="1.5" fill="#0A0A0F"/>
+        <circle cx="15" cy="11" r="1.5" fill="#0A0A0F"/>
+      </svg>
+      <span class="wordmark">Haunt</span>
+    </a>
+    <div class="links">
+      <a href="#">Privacy</a>
+      <span class="sep">·</span>
+      <a href="#">Terms</a>
+      <span class="sep">·</span>
+      <a href="#">Contact</a>
+    </div>
+    <div class="copy">© 2026 Haunt. Made in Los Angeles.</div>
+  </div>
+</footer>
+
+<script>
+  // Nav solidify on scroll
+  (function () {
+    const nav = document.getElementById('topnav');
+    const onScroll = () => {
+      if (window.scrollY > 12) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+  // Intersection Observer reveal
+  (function () {
+    const els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(el => el.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.14, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(el => io.observe(el));
+  })();
+
+  // Waitlist forms — success state
+  (function () {
+    function wire(formId) {
+      const form = document.getElementById(formId);
+      if (!form) return;
+      const wrap = form.closest('.waitlist');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = form.querySelector('input[type="email"]');
+        const val = (input.value || '').trim();
+        const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+        if (!ok) {
+          input.focus();
+          form.animate(
+            [{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(0)' }],
+            { duration: 260, easing: 'ease-out' }
+          );
+          return;
+        }
+        wrap.classList.add('is-success');
+      });
+    }
+    wire('waitlist-form');
+    wire('waitlist-form-2');
+  })();
+</script>
+
+</body>
+</html>
