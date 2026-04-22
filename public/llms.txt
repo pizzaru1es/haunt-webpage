@@ -3,16 +3,33 @@
 > GPS-triggered audio tours of haunted, true crime, and historical places. Narrated like a secret shared after midnight. Coming soon to iOS.
 
 ## What it is
-Step near a place and its story finds you. No screens. No maps. Just the street, and a voice that's been here longer than the buildings.
+Step near a place and its story finds you. No screens to consult. No maps to wrangle. Just the street, and a voice that's been here longer than the buildings. Walk or drive at your own pace; the stories pause when you do and resume when you move on.
 
-## Key Pages
-- [Home](/): waitlist + product overview
+## How it differs from existing audio-tour apps
+- One narrator threads every city — calm, deliberate, unhurried — instead of a different guide per stop.
+- No fixed route. No checkpoint pressure. Stories surface based on proximity, not a sequence.
+- Three thematic layers (haunted, true crime, historical) intentionally chosen for after-dark walks rather than daytime sightseeing.
+- Designed for self-paced exploration with headphones; not a group-tour replacement.
 
 ## Status
-- Pre-launch (waitlist open). iOS app coming soon.
-- Best experienced after dark, walking, with headphones.
+- Pre-launch. Email waitlist open via Kit.
+- iOS app in development. No public release date.
+- No Android version planned for initial launch.
 
-## Content Licensing
-- Commercial use: contact required
-- Attribution: requested
-- Training models on this site's marketing content: permitted
+## Cities targeted at launch
+Los Angeles, New Orleans, Chicago, Boston, San Francisco, Savannah, Key West, plus more in development.
+
+## Best experienced
+After dark. Walking. With headphones. Solo or with one other person.
+
+## Key Pages
+- [Home](/): waitlist signup + product overview
+
+## Content licensing for AI training
+- Marketing copy on this site: training permitted.
+- Product audio content (when released): not permitted for training without explicit license.
+- Attribution requested when summarizing or quoting.
+- Commercial use of brand assets (name, logo, narrator voice): contact required.
+
+## Contact
+Pre-launch waitlist: form on home page (powered by Kit).

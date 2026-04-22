@@ -6,14 +6,29 @@
 <title>Haunt — Every city has stories it doesn't tell tourists</title>
 <meta name="description" content="GPS-triggered audio tours of haunted, true crime, and historical places. Narrated like a secret shared after midnight. Coming soon to iOS." />
 
+<meta name="color-scheme" content="dark" />
+<meta name="theme-color" content="#0A0A0F" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Haunt" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
 <meta property="og:type" content="website" />
+<meta property="og:site_name" content="Haunt" />
+<meta property="og:locale" content="en_US" />
 <meta property="og:title" content="Haunt — Every city has stories it doesn't tell tourists" />
 <meta property="og:description" content="GPS-triggered audio tours of haunted, true crime, and historical places. Narrated like a secret shared after midnight." />
-<meta property="og:url" content="https://haunt-webpage.dry-waterfall-58ce.workers.dev/" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="theme-color" content="#0A0A0F" />
+<meta property="og:url" content="https://gethauntapp.com/" />
+<!-- og:image pending designed 1200x630 asset -->
 
-<link rel="canonical" href="https://haunt-webpage.dry-waterfall-58ce.workers.dev/" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Haunt — Every city has stories it doesn't tell tourists" />
+<meta name="twitter:description" content="GPS-triggered audio tours of haunted, true crime, and historical places. Narrated like a secret shared after midnight." />
+<!-- twitter:image and twitter:site:@handle pending -->
+
+<link rel="canonical" href="https://gethauntapp.com/" />
+<link rel="alternate" hreflang="en" href="https://gethauntapp.com/" />
+<link rel="alternate" hreflang="x-default" href="https://gethauntapp.com/" />
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="apple-touch-icon" href="/favicon.svg" />
@@ -28,19 +43,40 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Haunt",
-  "url": "https://haunt-webpage.dry-waterfall-58ce.workers.dev/",
-  "description": "GPS-triggered audio tours of haunted, true crime, and historical places. Narrated like a secret shared after midnight.",
-  "sameAs": []
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Haunt",
-  "url": "https://haunt-webpage.dry-waterfall-58ce.workers.dev/"
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://gethauntapp.com/#org",
+      "name": "Haunt",
+      "url": "https://gethauntapp.com/",
+      "logo": "https://gethauntapp.com/favicon.svg",
+      "description": "GPS-triggered audio tours of haunted, true crime, and historical places. Narrated like a secret shared after midnight.",
+      "sameAs": []
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://gethauntapp.com/#website",
+      "name": "Haunt",
+      "url": "https://gethauntapp.com/",
+      "publisher": { "@id": "https://gethauntapp.com/#org" },
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": "MobileApplication",
+      "@id": "https://gethauntapp.com/#app",
+      "name": "Haunt",
+      "operatingSystem": "iOS",
+      "applicationCategory": "TravelApplication",
+      "description": "GPS-triggered audio tours of haunted, true crime, and historical places. Walk or drive at your own pace; the city's stories surface as you approach them.",
+      "publisher": { "@id": "https://gethauntapp.com/#org" },
+      "featureList": [
+        "GPS-triggered story playback",
+        "Walk-or-drive self-paced narration",
+        "Single-narrator continuity across cities",
+        "Categories: haunted, true crime, historical"
+      ]
+    }
+  ]
 }
 </script>
 
