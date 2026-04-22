@@ -237,20 +237,28 @@
       radial-gradient(ellipse at 82% 70%, rgba(30, 35, 55, 0.5), transparent 60%),
       linear-gradient(160deg, #121218 0%, #0d0d14 45%, #08080d 100%);
   }
-  /* Amber lamp glow — soft, off-canvas anchor; breathes very gently */
+  /* Spectral spirit — follows the scroll, drifting side to side */
   .hero-glow {
-    position: absolute;
-    width: 1100px; height: 1100px;
-    right: -280px; top: -220px;
+    position: fixed;
+    width: 900px; height: 900px;
+    left: 50%; top: 50%;
+    margin-left: -450px; margin-top: -450px;
     background: radial-gradient(circle,
-      rgba(232,168,71,0.12) 0%,
-      rgba(232,168,71,0.07) 18%,
-      rgba(232,168,71,0.035) 35%,
-      rgba(232,168,71,0.012) 55%,
+      rgba(232,168,71,0.14) 0%,
+      rgba(232,168,71,0.08) 18%,
+      rgba(232,168,71,0.04) 35%,
+      rgba(232,168,71,0.014) 55%,
       transparent 72%);
-    animation: breathe 7s ease-in-out infinite;
     pointer-events: none;
     z-index: 1;
+    will-change: transform, opacity;
+    /* Drift is applied via CSS vars set by JS on scroll. Breathing runs on the inner via a nested element would be cleaner, but filter: brightness can double as breath. */
+    transform: translate3d(var(--spirit-x, 0px), var(--spirit-y, 0px), 0);
+    animation: spiritBreathe 7s ease-in-out infinite;
+  }
+  @keyframes spiritBreathe {
+    0%, 100% { opacity: 0.85; filter: blur(0px); }
+    50%      { opacity: 1;    filter: blur(1px); }
   }
   @keyframes breathe {
     0%, 100% { opacity: 0.9; }
@@ -778,6 +786,9 @@
 </head>
 <body>
 
+<!-- Spectral spirit — a drifting amber glow that follows the scroll -->
+<div class="hero-glow" id="spirit-glow" aria-hidden="true"></div>
+
 <!-- ---------- Peek ghost (desktop-only beckon) ---------- -->
 <div class="peek-ghost" id="peek-ghost" aria-hidden="true">
   <svg viewBox="0 0 24 24" width="64" height="64" fill="none">
@@ -808,7 +819,6 @@
 <!-- ---------- Hero ---------- -->
 <header id="top" class="hero">
   <div class="hero-bg" aria-hidden="true"></div>
-  <div class="hero-glow" aria-hidden="true"></div>
   <div class="hero-gate" aria-hidden="true"></div>
 
   <div class="wrap hero-inner">
@@ -1050,6 +1060,49 @@
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+  // Spectral spirit — drifts side to side as you scroll the page
+  (function () {
+    const spirit = document.getElementById('spirit-glow');
+    if (!spirit) return;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    let targetX = 0, targetY = 0;
+    let curX = 0, curY = 0;
+    let ticking = false;
+
+    function compute() {
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const p = Math.max(0, Math.min(1, window.scrollY / max));
+      // Two full side-to-side passes across the length of the page, phased against a gentler vertical float
+      const ampX = Math.min(window.innerWidth * 0.42, 520);
+      const ampY = 90;
+      targetX = Math.sin(p * Math.PI * 2.2) * ampX;
+      targetY = Math.cos(p * Math.PI * 1.4 + 0.6) * ampY;
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(tick);
+      }
+    }
+
+    function tick() {
+      // Ease toward target for a trailing, floaty feel
+      curX += (targetX - curX) * 0.08;
+      curY += (targetY - curY) * 0.08;
+      spirit.style.setProperty('--spirit-x', curX.toFixed(1) + 'px');
+      spirit.style.setProperty('--spirit-y', curY.toFixed(1) + 'px');
+      if (Math.abs(targetX - curX) > 0.3 || Math.abs(targetY - curY) > 0.3) {
+        requestAnimationFrame(tick);
+      } else {
+        ticking = false;
+      }
+    }
+
+    compute();
+    window.addEventListener('scroll', compute, { passive: true });
+    window.addEventListener('resize', compute, { passive: true });
   })();
 
   // Intersection Observer reveal
