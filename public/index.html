@@ -237,20 +237,28 @@
       radial-gradient(ellipse at 82% 70%, rgba(30, 35, 55, 0.5), transparent 60%),
       linear-gradient(160deg, #121218 0%, #0d0d14 45%, #08080d 100%);
   }
-  /* Amber lamp glow — soft, off-canvas anchor; breathes very gently */
+  /* Spectral spirit — follows the scroll, drifting side to side */
   .hero-glow {
-    position: absolute;
-    width: 1100px; height: 1100px;
-    right: -280px; top: -220px;
+    position: fixed;
+    width: 900px; height: 900px;
+    left: 50%; top: 50%;
+    margin-left: -450px; margin-top: -450px;
     background: radial-gradient(circle,
-      rgba(232,168,71,0.12) 0%,
-      rgba(232,168,71,0.07) 18%,
-      rgba(232,168,71,0.035) 35%,
-      rgba(232,168,71,0.012) 55%,
+      rgba(232,168,71,0.14) 0%,
+      rgba(232,168,71,0.08) 18%,
+      rgba(232,168,71,0.04) 35%,
+      rgba(232,168,71,0.014) 55%,
       transparent 72%);
-    animation: breathe 7s ease-in-out infinite;
     pointer-events: none;
     z-index: 1;
+    will-change: transform, opacity;
+    /* Drift is applied via CSS vars set by JS on scroll. Breathing runs on the inner via a nested element would be cleaner, but filter: brightness can double as breath. */
+    transform: translate3d(var(--spirit-x, 0px), var(--spirit-y, 0px), 0);
+    animation: spiritBreathe 7s ease-in-out infinite;
+  }
+  @keyframes spiritBreathe {
+    0%, 100% { opacity: 0.85; filter: blur(0px); }
+    50%      { opacity: 1;    filter: blur(1px); }
   }
   @keyframes breathe {
     0%, 100% { opacity: 0.9; }
@@ -428,14 +436,16 @@
     gap: 14px;
   }
   .city {
+    position: relative;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 26px 22px;
+    padding: 32px 22px;
     text-align: center;
-    min-height: 126px;
-    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px;
-    transition: border-color 220ms, transform 220ms;
+    min-height: 140px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    transition: border-color 220ms, transform 220ms, background-color 220ms;
+    overflow: hidden;
   }
   .city:hover {
     border-color: rgba(232,168,71,0.3);
@@ -447,22 +457,48 @@
     font-weight: 600;
     letter-spacing: -0.005em;
   }
+  .city .name {
+    transition: transform 260ms ease, opacity 260ms ease;
+  }
   .city .cats {
-    display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    position: absolute;
+    left: 0; right: 0; bottom: 20px;
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    padding: 0 14px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 280ms ease, transform 280ms ease;
+    pointer-events: none;
+  }
+  .city:hover {
+    background: #16161E;
+  }
+  .city:hover .name {
+    transform: translateY(-22px);
+  }
+  .city:hover .cats {
+    opacity: 1;
+    transform: translateY(0);
   }
   .city .cat {
-    opacity: 0.75;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--dim);
+    line-height: 1;
+    white-space: nowrap;
   }
-  .city .cat.haunt { color: var(--cat-haunt); }
-  .city .cat.crime { color: var(--cat-crime); }
-  .city .cat.hist  { color: var(--cat-hist); }
   .city .cat .dot {
     display: inline-block; width: 4px; height: 4px; border-radius: 50%;
-    background: currentColor; margin: 0 6px 2px 0; vertical-align: middle;
+    background: var(--amber);
+    opacity: 0.85;
   }
 
   .coming-later {
@@ -690,12 +726,14 @@
   .peek-ghost.is-up {
     transform: translate(-50%, 45%);
     transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
-    animation: peekBob 3.2s ease-in-out 700ms infinite;
+  }
+  .peek-ghost.is-bobbing {
+    animation: peekBob 3.2s ease-in-out infinite;
   }
   .peek-ghost.is-down {
-    transform: translate(-50%, 180%);
+    transform: translate(-50%, 220%);
     opacity: 1;
-    transition: transform 520ms cubic-bezier(0.55, 0, 0.9, 0.2);
+    transition: transform 620ms cubic-bezier(0.6, 0, 0.85, 0.25);
     animation: none;
   }
   /* Caught! Reveal full body, then dive past the viewport with a sway. Velocity-scaled via --bolt-* vars. */
@@ -724,6 +762,7 @@
     pointer-events: none;
   }
   .peek-ghost.is-up::before,
+  .peek-ghost.is-bobbing::before,
   .peek-ghost.is-bolting::before { opacity: 1; }
   .peek-ghost .eye {
     transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -746,6 +785,9 @@
 </style>
 </head>
 <body>
+
+<!-- Spectral spirit — a drifting amber glow that follows the scroll -->
+<div class="hero-glow" id="spirit-glow" aria-hidden="true"></div>
 
 <!-- ---------- Peek ghost (desktop-only beckon) ---------- -->
 <div class="peek-ghost" id="peek-ghost" aria-hidden="true">
@@ -777,7 +819,6 @@
 <!-- ---------- Hero ---------- -->
 <header id="top" class="hero">
   <div class="hero-bg" aria-hidden="true"></div>
-  <div class="hero-glow" aria-hidden="true"></div>
   <div class="hero-gate" aria-hidden="true"></div>
 
   <div class="wrap hero-inner">
@@ -802,7 +843,7 @@
         </svg>
         <div class="msg">We'll let you know. Good night.</div>
       </div>
-      <div class="form-caption">No spam. One email when we launch.</div>
+      <div class="form-caption">No spam. A few quiet pings. If we go dark, we didn't ghost you.</div>
     </div>
 
     <div class="trust reveal" style="--d:320ms">
@@ -847,10 +888,12 @@
       <article class="feat reveal" style="--d:160ms">
         <!-- key -->
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="8" cy="15" r="4.2"/>
-          <path d="M11.2 12.1l9.3-9.3"/>
-          <path d="M17 6l2.5 2.5"/>
-          <path d="M14.3 8.7l2 2"/>
+          <path d="M3 12h2"/>
+          <path d="M7 9v6"/>
+          <path d="M10.5 5v14"/>
+          <path d="M14 8v8"/>
+          <path d="M17.5 10v4"/>
+          <path d="M21 11v2"/>
         </svg>
         <h3>A voice that knows</h3>
         <p>One narrator threads every city. Calm, deliberate, a little inhuman. Not a tour guide — a presence that remembers.</p>
@@ -868,14 +911,65 @@
     </div>
 
     <div class="cities-grid">
-      <div class="city reveal"><div class="name">Los Angeles</div></div>
-      <div class="city reveal" style="--d:40ms"><div class="name">New Orleans</div></div>
-      <div class="city reveal" style="--d:80ms"><div class="name">Chicago</div></div>
-      <div class="city reveal" style="--d:120ms"><div class="name">Boston</div></div>
-      <div class="city reveal" style="--d:40ms"><div class="name">San Francisco</div></div>
-      <div class="city reveal" style="--d:80ms"><div class="name">Savannah</div></div>
-      <div class="city reveal" style="--d:120ms"><div class="name">Key West</div></div>
-      <div class="city reveal" style="--d:160ms"><div class="name">&amp; more</div></div>
+      <div class="city reveal">
+        <div class="name">Los Angeles</div>
+        <div class="cats">
+          <span class="cat haunt"><span class="dot"></span>Haunted</span>
+          <span class="cat crime"><span class="dot"></span>True Crime</span>
+          <span class="cat hist"><span class="dot"></span>Historical</span>
+        </div>
+      </div>
+      <div class="city reveal" style="--d:40ms">
+        <div class="name">New Orleans</div>
+        <div class="cats">
+          <span class="cat haunt"><span class="dot"></span>Haunted</span>
+          <span class="cat crime"><span class="dot"></span>True Crime</span>
+          <span class="cat hist"><span class="dot"></span>Historical</span>
+        </div>
+      </div>
+      <div class="city reveal" style="--d:80ms">
+        <div class="name">Chicago</div>
+        <div class="cats">
+          <span class="cat crime"><span class="dot"></span>True Crime</span>
+          <span class="cat hist"><span class="dot"></span>Historical</span>
+        </div>
+      </div>
+      <div class="city reveal" style="--d:120ms">
+        <div class="name">Boston</div>
+        <div class="cats">
+          <span class="cat haunt"><span class="dot"></span>Haunted</span>
+          <span class="cat crime"><span class="dot"></span>True Crime</span>
+          <span class="cat hist"><span class="dot"></span>Historical</span>
+        </div>
+      </div>
+      <div class="city reveal" style="--d:40ms">
+        <div class="name">San Francisco</div>
+        <div class="cats">
+          <span class="cat crime"><span class="dot"></span>True Crime</span>
+          <span class="cat hist"><span class="dot"></span>Historical</span>
+        </div>
+      </div>
+      <div class="city reveal" style="--d:80ms">
+        <div class="name">Savannah</div>
+        <div class="cats">
+          <span class="cat haunt"><span class="dot"></span>Haunted</span>
+          <span class="cat crime"><span class="dot"></span>True Crime</span>
+          <span class="cat hist"><span class="dot"></span>Historical</span>
+        </div>
+      </div>
+      <div class="city reveal" style="--d:120ms">
+        <div class="name">Key West</div>
+        <div class="cats">
+          <span class="cat haunt"><span class="dot"></span>Haunted</span>
+          <span class="cat hist"><span class="dot"></span>Historical</span>
+        </div>
+      </div>
+      <div class="city reveal" style="--d:160ms">
+        <div class="name">&amp; more</div>
+        <div class="cats">
+          <span class="cat" style="color: var(--muted); border-color: var(--border);">Coming soon</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -926,7 +1020,7 @@
           </svg>
           <div class="msg">We'll let you know. Good night.</div>
         </div>
-        <div class="form-caption">No spam. One email when we launch.</div>
+        <div class="form-caption">No spam. A few quiet pings. If we go dark, we didn't ghost you.</div>
       </div>
 
       <div class="platform">Coming soon</div>
@@ -966,6 +1060,49 @@
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+  // Spectral spirit — drifts side to side as you scroll the page
+  (function () {
+    const spirit = document.getElementById('spirit-glow');
+    if (!spirit) return;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    let targetX = 0, targetY = 0;
+    let curX = 0, curY = 0;
+    let ticking = false;
+
+    function compute() {
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const p = Math.max(0, Math.min(1, window.scrollY / max));
+      // Two full side-to-side passes across the length of the page, phased against a gentler vertical float
+      const ampX = Math.min(window.innerWidth * 0.42, 520);
+      const ampY = 90;
+      targetX = Math.sin(p * Math.PI * 2.2) * ampX;
+      targetY = Math.cos(p * Math.PI * 1.4 + 0.6) * ampY;
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(tick);
+      }
+    }
+
+    function tick() {
+      // Ease toward target for a trailing, floaty feel
+      curX += (targetX - curX) * 0.08;
+      curY += (targetY - curY) * 0.08;
+      spirit.style.setProperty('--spirit-x', curX.toFixed(1) + 'px');
+      spirit.style.setProperty('--spirit-y', curY.toFixed(1) + 'px');
+      if (Math.abs(targetX - curX) > 0.3 || Math.abs(targetY - curY) > 0.3) {
+        requestAnimationFrame(tick);
+      } else {
+        ticking = false;
+      }
+    }
+
+    compute();
+    window.addEventListener('scroll', compute, { passive: true });
+    window.addEventListener('resize', compute, { passive: true });
   })();
 
   // Intersection Observer reveal
@@ -1051,6 +1188,7 @@
     const baseR = { x: 15, y: 11 };
 
     let ducked = false;
+    let cycleEnded = false;
     let lastMouseMove = Date.now();
     let lastScrollY = window.scrollY;
     let lastScrollAt = performance.now();
@@ -1090,24 +1228,24 @@
     }, 1400);
 
     function onScroll() {
-      if (ducked) return;
+      if (ducked || cycleEnded) return;
       const now = performance.now();
       const dy = window.scrollY - lastScrollY;
       const dt = Math.max(1, now - lastScrollAt);
       const velocity = Math.abs(dy / dt); // px per ms
       lastScrollY = window.scrollY;
       lastScrollAt = now;
-      if (window.scrollY > 40) duck(velocity);
+      if (window.scrollY > 40) endCycle(velocity);
     }
 
-    function duck(velocity) {
-      if (ducked) return;
+    function endCycle(velocity) {
+      if (cycleEnded) return;
+      cycleEnded = true;
       ducked = true;
+      ghost.classList.remove('is-bobbing');
       ghost.classList.remove('is-up');
-      // velocity > 1.2 px/ms = a real flick. Map to bolt duration + sway distance.
       const fast = (velocity || 0) > 0.6;
       if (fast) {
-        // Faster scroll → tighter dive, more sway, slightly bigger reveal
         const swayPx = Math.min(18, 6 + velocity * 4).toFixed(0) + 'px';
         const dur    = Math.max(540, 820 - velocity * 80).toFixed(0) + 'ms';
         ghost.style.setProperty('--bolt-sway', swayPx);
@@ -1123,11 +1261,53 @@
       setTimeout(() => ghost.remove(), cleanupDelay);
     }
 
+    // Loop: duck under, wait, rise again. Cancelled permanently if the user scrolls.
+    function duckTemporarily() {
+      if (cycleEnded || ducked) return;
+      ducked = true;
+      setEyes(0, 0);
+      // Capture current transform from the running animation, freeze it inline,
+      // then transition from there to the down state.
+      const cs = getComputedStyle(ghost);
+      const currentTransform = cs.transform;
+      ghost.classList.remove('is-bobbing');
+      ghost.style.transform = currentTransform;
+      // Force reflow so the browser registers the inline transform as the starting state
+      void ghost.offsetHeight;
+      ghost.style.transition = 'transform 620ms cubic-bezier(0.6, 0, 0.85, 0.25)';
+      ghost.style.transform = 'translate(-50%, 220%)';
+      setTimeout(() => {
+        if (cycleEnded) return;
+        ducked = false;
+        // Rise
+        ghost.style.transition = 'transform 740ms cubic-bezier(0.22, 1, 0.36, 1)';
+        ghost.style.transform = 'translate(-50%, 45%)';
+        setTimeout(() => {
+          if (cycleEnded || ducked) return;
+          // Clear inline styles and let the bobbing animation take over
+          ghost.style.transition = '';
+          ghost.style.transform = '';
+          ghost.classList.add('is-bobbing');
+        }, 760);
+        scheduleNextDuck();
+      }, 2400);
+    }
+
+    let nextDuckTimer = null;
+    function scheduleNextDuck() {
+      clearTimeout(nextDuckTimer);
+      nextDuckTimer = setTimeout(() => {
+        if (!cycleEnded) duckTemporarily();
+      }, 4200);
+    }
+
     setTimeout(() => {
       ghost.classList.add('is-up');
+      // delay the bob so the rise transition plays uninterrupted
+      setTimeout(() => { if (!ducked && !cycleEnded) ghost.classList.add('is-bobbing'); }, 720);
       window.addEventListener('mousemove', onMove, { passive: true });
       window.addEventListener('scroll', onScroll, { passive: true });
-      setTimeout(() => duck(0), 4200);
+      scheduleNextDuck();
     }, 1500);
   })();
 </script>
