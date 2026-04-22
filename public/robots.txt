@@ -16,4 +16,4 @@ Allow: /
 User-agent: CCBot
 Disallow: /
 
-Sitemap: https://haunt-webpage.dry-waterfall-58ce.workers.dev/sitemap.xml
+Sitemap: https://gethauntapp.com/sitemap.xml
