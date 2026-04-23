@@ -110,9 +110,9 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; background: var(--bg); }
   body {
-    background: var(--bg);
+    background: transparent;
     color: var(--text);
     font-family: var(--sans);
     font-weight: 400;
@@ -121,6 +121,11 @@
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
+  /* Sections are transparent so the shader wallpaper bleeds through the whole page */
+  section, footer {
+    background: transparent;
+  }
+  section + section { border-top: none; }
 
   /* Subtle film grain over everything (very faint) */
   body::after {
@@ -179,7 +184,7 @@
     padding: 120px 0;
     position: relative;
   }
-  section + section { border-top: 1px solid var(--border); }
+  /* No hard breaks between sections — shader flows throughout */
 
   .section-head {
     text-align: center;
@@ -221,10 +226,10 @@
     display: flex; align-items: center; justify-content: space-between;
   }
   nav.topnav.scrolled {
-    background: rgba(10,10,15,0.78);
+    background: rgba(10,10,15,0.65);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
-    border-bottom-color: var(--border);
+    border-bottom-color: transparent;
   }
   .brand {
     display: inline-flex; align-items: center; gap: 12px;
@@ -238,6 +243,7 @@
     text-transform: uppercase;
   }
   .nav-cta {
+    position: relative;
     font-family: var(--mono);
     font-size: 12px;
     letter-spacing: 0.14em;
@@ -246,11 +252,91 @@
     padding: 10px 16px;
     border: 1px solid var(--border);
     border-radius: 999px;
-    transition: border-color 200ms, color 200ms, background-color 200ms;
+    transition: border-color 200ms, color 200ms, background-color 200ms, box-shadow 200ms;
+    overflow: visible;
+    isolation: isolate;
+  }
+  /* Soft breathing amber aura */
+  .nav-cta::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 999px;
+    background: radial-gradient(ellipse at center, rgba(232,168,71,0.28) 0%, rgba(232,168,71,0.08) 45%, transparent 72%);
+    filter: blur(10px);
+    opacity: 0.55;
+    z-index: -1;
+    animation: ctaAura 3.2s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes ctaAura {
+    0%, 100% { opacity: 0.40; transform: scale(1.00); }
+    50%      { opacity: 0.85; transform: scale(1.06); }
+  }
+  /* Traveling shimmer along the pill's edge */
+  .nav-cta::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 999px;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--shimmer-angle, 0deg),
+      transparent 0deg,
+      rgba(232,168,71,0.00) 40deg,
+      rgba(232,168,71,0.85) 70deg,
+      rgba(255,220,160,1.00) 80deg,
+      rgba(232,168,71,0.85) 90deg,
+      rgba(232,168,71,0.00) 120deg,
+      transparent 160deg,
+      transparent 360deg
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+    animation: ctaShimmer 3.8s linear infinite;
+  }
+  @property --shimmer-angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+  }
+  @keyframes ctaShimmer {
+    0%   { --shimmer-angle: 0deg; }
+    100% { --shimmer-angle: 360deg; }
+  }
+  /* Floating sparkle dots around the pill */
+  .nav-cta .sparkle {
+    position: absolute;
+    width: 3px; height: 3px;
+    background: radial-gradient(circle, #FFE4B3 0%, #E8A847 45%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    filter: drop-shadow(0 0 4px rgba(232,168,71,0.8));
+  }
+  .nav-cta .sparkle.s1 { top: -5px;  left: 18%;  animation: sparkle 2.8s ease-in-out infinite 0.0s; }
+  .nav-cta .sparkle.s2 { top: -3px;  right: 22%; animation: sparkle 2.4s ease-in-out infinite 0.8s; width: 2px; height: 2px; }
+  .nav-cta .sparkle.s3 { bottom: -4px; left: 30%; animation: sparkle 3.1s ease-in-out infinite 1.4s; }
+  .nav-cta .sparkle.s4 { bottom: -6px; right: 14%; animation: sparkle 2.6s ease-in-out infinite 0.4s; width: 4px; height: 4px; }
+  .nav-cta .sparkle.s5 { top: 50%; left: -6px; margin-top: -1.5px; animation: sparkle 3.4s ease-in-out infinite 2.0s; }
+  .nav-cta .sparkle.s6 { top: 50%; right: -5px; margin-top: -1.5px; animation: sparkle 2.9s ease-in-out infinite 1.1s; width: 2px; height: 2px; }
+  @keyframes sparkle {
+    0%, 100% { opacity: 0; transform: scale(0.4); }
+    40%      { opacity: 1; transform: scale(1.3); }
+    60%      { opacity: 0.9; transform: scale(1.1); }
+    80%      { opacity: 0; transform: scale(0.5); }
   }
   .nav-cta:hover {
     border-color: var(--amber-60);
     color: var(--amber);
+    box-shadow: 0 0 0 1px rgba(232,168,71,0.35), 0 6px 24px rgba(232,168,71,0.22);
+  }
+  .nav-cta:hover::before { opacity: 0.95; }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-cta::before, .nav-cta::after, .nav-cta .sparkle { animation: none; }
   }
 
   /* ---------- Hero ---------- */
@@ -266,50 +352,29 @@
   .hero-bg {
     position: absolute; inset: 0;
     z-index: 0;
-    background:
-      /* bottom fade to bg */
-      linear-gradient(180deg, rgba(10,10,15,0.55) 0%, rgba(10,10,15,0.82) 55%, rgba(10,10,15,1) 100%),
-      /* placeholder "photograph" — wet cobblestone / gaslamp feel via gradients */
-      radial-gradient(ellipse at 18% 30%, rgba(60, 50, 35, 0.55), transparent 55%),
-      radial-gradient(ellipse at 82% 70%, rgba(30, 35, 55, 0.5), transparent 60%),
-      linear-gradient(160deg, #121218 0%, #0d0d14 45%, #08080d 100%);
-  }
-  /* Spectral spirit — follows the scroll, drifting side to side */
-  .hero-glow {
-    position: fixed;
-    width: 900px; height: 900px;
-    left: 50%; top: 50%;
-    margin-left: -450px; margin-top: -450px;
-    background: radial-gradient(circle,
-      rgba(232,168,71,0.14) 0%,
-      rgba(232,168,71,0.08) 18%,
-      rgba(232,168,71,0.04) 35%,
-      rgba(232,168,71,0.014) 55%,
-      transparent 72%);
+    background: transparent;
     pointer-events: none;
-    z-index: 1;
-    will-change: transform, opacity;
-    /* Drift is applied via CSS vars set by JS on scroll. Breathing runs on the inner via a nested element would be cleaner, but filter: brightness can double as breath. */
-    transform: translate3d(var(--spirit-x, 0px), var(--spirit-y, 0px), 0);
-    animation: spiritBreathe 7s ease-in-out infinite;
   }
-  @keyframes spiritBreathe {
-    0%, 100% { opacity: 0.85; filter: blur(0px); }
-    50%      { opacity: 1;    filter: blur(1px); }
+  /* Spectral shader wallpaper — full-page interactive canvas */
+  #spectral-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    display: block;
   }
+  /* Ensure all page content sits above the canvas */
+  nav.topnav, header.hero, section, footer, .peek-ghost { position: relative; z-index: 2; }
+  nav.topnav { z-index: 40; }
+  .peek-ghost { z-index: 30; }
   @keyframes breathe {
     0%, 100% { opacity: 0.9; }
     50%      { opacity: 1; }
   }
-  /* Bottom vignette fade into page background */
-  .hero-gate {
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    height: 40%;
-    pointer-events: none;
-    z-index: 1;
-    background: linear-gradient(180deg, transparent 0%, rgba(10,10,15,0.95) 100%);
-  }
+  /* (removed) hero-gate — its bottom gradient was reading as a hard seam above the first section */
+  .hero-gate { display: none; }
 
   .hero-inner {
     position: relative;
@@ -702,7 +767,6 @@
   /* ---------- Footer ---------- */
   footer {
     padding: 64px 0 72px;
-    border-top: 1px solid var(--border);
     text-align: center;
   }
   footer .brand { justify-content: center; margin-bottom: 22px; }
@@ -823,8 +887,8 @@
 </head>
 <body>
 
-<!-- Spectral spirit — a drifting amber glow that follows the scroll -->
-<div class="hero-glow" id="spirit-glow" aria-hidden="true"></div>
+<!-- Spectral shader wallpaper — interactive WebGL canvas -->
+<canvas id="spectral-canvas" aria-hidden="true"></canvas>
 
 <!-- ---------- Peek ghost (desktop-only beckon) ---------- -->
 <div class="peek-ghost" id="peek-ghost" aria-hidden="true">
@@ -849,7 +913,15 @@
       </svg>
       <span class="wordmark">Haunt</span>
     </a>
-    <a href="#waitlist" class="nav-cta">Join the waitlist</a>
+    <a href="#join" class="nav-cta">
+      <span class="sparkle s1"></span>
+      <span class="sparkle s2"></span>
+      <span class="sparkle s3"></span>
+      <span class="sparkle s4"></span>
+      <span class="sparkle s5"></span>
+      <span class="sparkle s6"></span>
+      Join the waitlist
+    </a>
   </div>
 </nav>
 
@@ -880,7 +952,7 @@
         </svg>
         <div class="msg">We'll let you know. Good night.</div>
       </div>
-      <div class="form-caption">No spam. A few quiet pings. If we go dark, we didn't ghost you.</div>
+      <div class="form-caption">No spam. One email when we launch.</div>
     </div>
 
     <div class="trust reveal" style="--d:320ms">
@@ -1057,7 +1129,7 @@
           </svg>
           <div class="msg">We'll let you know. Good night.</div>
         </div>
-        <div class="form-caption">No spam. A few quiet pings. If we go dark, we didn't ghost you.</div>
+        <div class="form-caption">No spam. One email when we launch.</div>
       </div>
 
       <div class="platform">Coming soon</div>
@@ -1092,47 +1164,315 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   })();
 
-  // Spectral spirit — drifts side to side as you scroll the page
+  // ============================================================
+  // Spectral shader wallpaper — WebGL, reacts to mouse + clicks
+  // ============================================================
   (function () {
-    const spirit = document.getElementById('spirit-glow');
-    if (!spirit) return;
+    const canvas = document.getElementById('spectral-canvas');
+    if (!canvas) return;
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
 
-    let targetX = 0, targetY = 0;
-    let curX = 0, curY = 0;
-    let ticking = false;
+    const gl = canvas.getContext('webgl', { premultipliedAlpha: false, antialias: false, alpha: true });
+    if (!gl) { canvas.style.display = 'none'; return; }
 
-    function compute() {
-      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const p = Math.max(0, Math.min(1, window.scrollY / max));
-      // Two full side-to-side passes across the length of the page, phased against a gentler vertical float
-      const ampX = Math.min(window.innerWidth * 0.42, 520);
-      const ampY = 90;
-      targetX = Math.sin(p * Math.PI * 2.2) * ampX;
-      targetY = Math.cos(p * Math.PI * 1.4 + 0.6) * ampY;
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(tick);
+    const vert = `
+      attribute vec2 a_pos;
+      void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
+    `;
+
+    // Fragment shader: layered fbm domain-warped "ectoplasm" in amber/cold-blue, with
+    // mouse-following attractor, gentle scroll drift, and up to 4 active click ripples.
+    const frag = `
+      precision highp float;
+      uniform vec2  u_res;
+      uniform float u_time;
+      uniform vec2  u_mouse;      // 0..1 normalized, eased
+      uniform vec2  u_mouseRaw;   // 0..1 instant
+      uniform float u_scroll;     // pixels
+      uniform vec2  u_drift;      // scroll-driven orbit center offset in aspect-corrected space
+      uniform vec4  u_pulseX;     // up to 4 click pulse X (0..1)
+      uniform vec4  u_pulseY;     // pulse Y (0..1)
+      uniform vec4  u_pulseT;     // pulse start time
+      uniform vec4  u_pulseDX;    // pulse blow direction X (aspect-corrected)
+      uniform vec4  u_pulseDY;    // pulse blow direction Y
+      uniform float u_dpr;
+
+      // --- hash / noise ---
+      float hash(vec2 p) {
+        p = fract(p * vec2(123.34, 456.21));
+        p += dot(p, p + 45.32);
+        return fract(p.x * p.y);
       }
-    }
+      float vnoise(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        float a = hash(i);
+        float b = hash(i + vec2(1.0, 0.0));
+        float c = hash(i + vec2(0.0, 1.0));
+        float d = hash(i + vec2(1.0, 1.0));
+        vec2 u = f*f*(3.0 - 2.0*f);
+        return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+      }
+      float fbm(vec2 p) {
+        float v = 0.0;
+        float a = 0.5;
+        mat2 rot = mat2(0.8, -0.6, 0.6, 0.8);
+        for (int i = 0; i < 5; i++) {
+          v += a * vnoise(p);
+          p = rot * p * 2.02;
+          a *= 0.5;
+        }
+        return v;
+      }
 
-    function tick() {
-      // Ease toward target for a trailing, floaty feel
-      curX += (targetX - curX) * 0.08;
-      curY += (targetY - curY) * 0.08;
-      spirit.style.setProperty('--spirit-x', curX.toFixed(1) + 'px');
-      spirit.style.setProperty('--spirit-y', curY.toFixed(1) + 'px');
-      if (Math.abs(targetX - curX) > 0.3 || Math.abs(targetY - curY) > 0.3) {
-        requestAnimationFrame(tick);
+      // domain-warped fbm -> soft volumetric ectoplasm
+      float ecto(vec2 p, float t) {
+        vec2 q = vec2(
+          fbm(p + vec2(0.0, 0.3*t)),
+          fbm(p + vec2(5.2, -0.2*t) + 4.3)
+        );
+        vec2 r = vec2(
+          fbm(p + 2.4*q + vec2(1.7, 9.2) + 0.15*t),
+          fbm(p + 2.4*q + vec2(8.3, 2.8) - 0.13*t)
+        );
+        return fbm(p + 2.0*r);
+      }
+
+      void main() {
+        vec2 frag = gl_FragCoord.xy;
+        vec2 res  = u_res;
+        vec2 uv   = frag / res;
+        // aspect-correct centered coordinate
+        vec2 p = (frag - 0.5*res) / min(res.x, res.y);
+
+        float t = u_time * 0.18;
+
+        // The warm glow center is a blend of the scroll-driven drift and the mouse.
+        vec2 mouseAR = (u_mouse - 0.5) * vec2(res.x/min(res.x,res.y), res.y/min(res.x,res.y));
+        vec2 center  = mix(u_drift, mouseAR, 0.45);
+
+        // Field: pull coords gently toward the blended center
+        vec2 toC = (center - p);
+        float dC = length(toC);
+        vec2 pull = toC * exp(-dC*1.1) * 0.30;
+
+        // Gentle time-based drift (no scroll-locked translation — that read as "falling downward").
+        // Two slow, phase-offset flows keep the smoke feeling weightless and suspended.
+        vec2 flow = vec2(sin(t*0.31) * 0.18, cos(t*0.23 + 1.3) * 0.14);
+
+        // Click — subtle overall glow increase, no positional effect
+        float clickGlow = 0.0;
+        for (int i = 0; i < 4; i++) {
+          float ti = u_pulseT[i];
+          if (ti < 0.0) continue;
+          float age = u_time - ti;
+          if (age < 0.0 || age > 1.6) continue;
+          clickGlow += exp(-age*1.8) * (1.0 - exp(-age*10.0));
+        }
+
+        vec2 fp = p*1.2 + pull + flow;
+        float f1 = ecto(fp + vec2(sin(t*0.5)*0.4, cos(t*0.4)*0.35), t);
+        float f2 = ecto(fp*1.9 + vec2(3.1 + cos(t*0.3)*0.3, -1.7 + sin(t*0.27)*0.3), t*1.1);
+
+        // Warm halo around the blended center — this is the orange/yellow glow heart
+        float halo = exp(-dC*1.9) * 0.85;
+
+        // Core spectral intensity (no pulse contribution — clicks only displace, don't brighten)
+        float core = pow(smoothstep(0.12, 0.95, f1*0.65 + f2*0.4 + halo*0.8), 1.10);
+
+        // Wispy high-frequency tendrils that drift slowly
+        float wisp = smoothstep(0.55, 0.95, ecto(fp*3.1 + vec2(-t*0.8, t*0.5), t*0.7));
+        core = mix(core, max(core, wisp*0.55), 0.5);
+
+        // Spectral palette — deep smoky void, cold mids, warmer amber peaks (dimmed for readability)
+        vec3 cVoid   = vec3(0.014, 0.014, 0.022);
+        vec3 cCold   = vec3(0.08,  0.09,  0.18);
+        vec3 cViolet = vec3(0.16,  0.11,  0.23);
+        vec3 cWarm   = vec3(0.62,  0.42,  0.17);   // amber, dimmer
+        vec3 cHot    = vec3(0.88,  0.66,  0.32);   // lantern highlight, tempered
+
+        vec3 col = cVoid;
+        col = mix(col, cCold,   smoothstep(0.05, 0.45, core));
+        col = mix(col, cViolet, smoothstep(0.30, 0.70, core) * 0.55);
+        col = mix(col, cWarm,   smoothstep(0.60, 0.88, core) * 0.80);
+        col = mix(col, cHot,    smoothstep(0.84, 0.98, core) * 0.65);
+
+        // (clicks don't add warmth — they blow the smoke aside via breath displacement above)
+
+        // Heavier vignette — edges fall off into near-black smoke
+        float vig = smoothstep(1.25, 0.25, length(p));
+        col *= mix(0.35, 1.0, vig);
+
+        // Faint animated grain
+        float g = (hash(frag * 0.5 + u_time) - 0.5) * 0.022;
+        col += g;
+
+        // Global amplitude — smoldering, readable; gently lifts on click
+        col *= 0.52 * (1.0 + clickGlow * 0.12);
+
+        // Lift near-black so it isn't pure black
+        col = max(col, vec3(0.018, 0.018, 0.025));
+
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `;
+
+    function compile(type, src) {
+      const sh = gl.createShader(type);
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+        console.error('Shader error:', gl.getShaderInfoLog(sh));
+        return null;
+      }
+      return sh;
+    }
+    const vs = compile(gl.VERTEX_SHADER, vert);
+    const fs = compile(gl.FRAGMENT_SHADER, frag);
+    if (!vs || !fs) { canvas.style.display = 'none'; return; }
+    const prog = gl.createProgram();
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      console.error('Program link error:', gl.getProgramInfoLog(prog));
+      canvas.style.display = 'none'; return;
+    }
+    gl.useProgram(prog);
+
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'a_pos');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+    const uRes    = gl.getUniformLocation(prog, 'u_res');
+    const uTime   = gl.getUniformLocation(prog, 'u_time');
+    const uMouse  = gl.getUniformLocation(prog, 'u_mouse');
+    const uMouseR = gl.getUniformLocation(prog, 'u_mouseRaw');
+    const uScroll = gl.getUniformLocation(prog, 'u_scroll');
+    const uDrift  = gl.getUniformLocation(prog, 'u_drift');
+    const uPulseX  = gl.getUniformLocation(prog, 'u_pulseX');
+    const uPulseY  = gl.getUniformLocation(prog, 'u_pulseY');
+    const uPulseT  = gl.getUniformLocation(prog, 'u_pulseT');
+    const uPulseDX = gl.getUniformLocation(prog, 'u_pulseDX');
+    const uPulseDY = gl.getUniformLocation(prog, 'u_pulseDY');
+    const uDpr    = gl.getUniformLocation(prog, 'u_dpr');
+
+    let W = 0, H = 0, DPR = 1;
+    function resize() {
+      DPR = Math.min(window.devicePixelRatio || 1, 1.75);
+      W = Math.floor(window.innerWidth * DPR);
+      H = Math.floor(window.innerHeight * DPR);
+      canvas.width = W; canvas.height = H;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      gl.viewport(0, 0, W, H);
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    // Mouse state
+    let mx = 0.5, my = 0.5;         // raw
+    let emx = 0.5, emy = 0.5;       // eased
+    window.addEventListener('pointermove', (e) => {
+      mx = e.clientX / window.innerWidth;
+      my = 1.0 - (e.clientY / window.innerHeight);
+    }, { passive: true });
+
+    // Click pulses (4 slots, round-robin). Each click also stores a blow direction,
+    // taken from recent cursor motion; if cursor is still, a gentle random direction is chosen.
+    const pulseX  = [0,0,0,0], pulseY = [0,0,0,0], pulseT = [-9,-9,-9,-9];
+    const pulseDX = [0,0,0,0], pulseDY = [0,0,0,0];
+    let pulseIdx = 0;
+    let prevMX = 0.5, prevMY = 0.5, prevMT = performance.now();
+    let velX = 0, velY = 0;
+    window.addEventListener('pointermove', (e) => {
+      const now = performance.now();
+      const dt  = Math.max(1, now - prevMT);
+      const nx  = e.clientX / window.innerWidth;
+      const ny  = 1.0 - e.clientY / window.innerHeight;
+      velX = (nx - prevMX) / dt * 1000; // normalized units / second
+      velY = (ny - prevMY) / dt * 1000;
+      prevMX = nx; prevMY = ny; prevMT = now;
+    }, { passive: true });
+    function triggerPulse(clientX, clientY) {
+      pulseX[pulseIdx] = clientX / window.innerWidth;
+      pulseY[pulseIdx] = clientY / window.innerHeight;
+      pulseT[pulseIdx] = (performance.now() - t0) / 1000.0;
+      // direction: use recent velocity; fall back to a random gentle direction
+      let dx = velX, dy = velY;
+      const mag = Math.hypot(dx, dy);
+      if (mag < 0.05) {
+        const a = Math.random() * Math.PI * 2;
+        dx = Math.cos(a); dy = Math.sin(a);
       } else {
-        ticking = false;
+        dx /= mag; dy /= mag;
       }
+      pulseDX[pulseIdx] = dx;
+      pulseDY[pulseIdx] = dy;
+      pulseIdx = (pulseIdx + 1) % 4;
+    }
+    window.addEventListener('pointerdown', (e) => {
+      triggerPulse(e.clientX, e.clientY);
+    }, { passive: true });
+
+    // Scroll tracking + eased drift target for the warm glow center
+    let scrollY = window.scrollY;
+    let driftX = 0, driftY = 0;           // eased
+    window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
+
+    function computeDriftTarget() {
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const p = Math.max(0, Math.min(1, scrollY / max));
+      // aspect-corrected coords range ~-aspect/2..aspect/2 horizontally and ~-0.5..0.5 vertically.
+      // Sweep horizontally with ~2 passes, float vertically with a phased cosine.
+      const ampX = 0.55;
+      const ampY = 0.18;
+      const tx = Math.sin(p * Math.PI * 2.2) * ampX;
+      const ty = Math.cos(p * Math.PI * 1.4 + 0.6) * ampY;
+      return [tx, ty];
     }
 
-    compute();
-    window.addEventListener('scroll', compute, { passive: true });
-    window.addEventListener('resize', compute, { passive: true });
+    const t0 = performance.now();
+    let running = true;
+
+    // Pause when tab hidden
+    document.addEventListener('visibilitychange', () => {
+      running = !document.hidden;
+      if (running) loop();
+    });
+
+    function loop() {
+      if (!running) return;
+      const now = performance.now();
+      const t = (now - t0) / 1000.0;
+
+      // Ease mouse toward raw for a floaty trail
+      emx += (mx - emx) * (prefersReduced ? 1.0 : 0.06);
+      emy += (my - emy) * (prefersReduced ? 1.0 : 0.06);
+
+      // Ease drift target
+      const [tx, ty] = computeDriftTarget();
+      driftX += (tx - driftX) * (prefersReduced ? 1.0 : 0.05);
+      driftY += (ty - driftY) * (prefersReduced ? 1.0 : 0.05);
+
+      gl.uniform2f(uRes, W, H);
+      gl.uniform1f(uTime, prefersReduced ? 0.0 : t);
+      gl.uniform2f(uMouse, emx, emy);
+      gl.uniform2f(uMouseR, mx, my);
+      gl.uniform1f(uScroll, scrollY);
+      gl.uniform2f(uDrift, driftX, driftY);
+      gl.uniform4f(uPulseX,  pulseX[0],  pulseX[1],  pulseX[2],  pulseX[3]);
+      gl.uniform4f(uPulseY,  pulseY[0],  pulseY[1],  pulseY[2],  pulseY[3]);
+      gl.uniform4f(uPulseT,  pulseT[0],  pulseT[1],  pulseT[2],  pulseT[3]);
+      gl.uniform4f(uPulseDX, pulseDX[0], pulseDX[1], pulseDX[2], pulseDX[3]);
+      gl.uniform4f(uPulseDY, pulseDY[0], pulseDY[1], pulseDY[2], pulseDY[3]);
+      gl.uniform1f(uDpr, DPR);
+
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      requestAnimationFrame(loop);
+    }
+    loop();
   })();
 
   // Intersection Observer reveal
