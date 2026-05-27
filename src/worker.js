@@ -1,8 +1,8 @@
 // Canonical-host enforcer.
-// Any request hitting the workers.dev origin is 301'd to the canonical
-// gethauntapp.com host, preserving path + querystring. All other hosts
-// (gethauntapp.com itself, custom-domain previews) pass through to the
-// static-assets binding unchanged.
+// Any request hitting HTTP, www, or the workers.dev origin is 301'd to the
+// canonical HTTPS gethauntapp.com host, preserving path + querystring. All
+// other hosts (gethauntapp.com itself, custom-domain previews) pass through to
+// the static-assets binding unchanged.
 
 const CANONICAL_HOST = 'gethauntapp.com';
 
@@ -15,7 +15,12 @@ const LEGAL_REDIRECTS = {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.hostname.endsWith('.workers.dev')) {
+    if (
+      url.protocol !== 'https:' ||
+      url.hostname === `www.${CANONICAL_HOST}` ||
+      url.hostname.endsWith('.workers.dev')
+    ) {
+      url.protocol = 'https:';
       url.hostname = CANONICAL_HOST;
       url.port = '';
       return Response.redirect(url.toString(), 301);

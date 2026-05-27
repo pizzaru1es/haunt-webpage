@@ -1,0 +1,4 @@
+Contact: mailto:hello@gethauntapp.com
+Preferred-Languages: en
+Canonical: https://gethauntapp.com/.well-known/security.txt
+Expires: 2027-05-27T00:00:00Z

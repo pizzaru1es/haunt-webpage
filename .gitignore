@@ -3,3 +3,4 @@ node_modules/
 .claude/
 .web-studio/
 .web-studio-design/
+.DS_Store
