@@ -1,6 +1,6 @@
 # Haunt
 
-> GPS-triggered audio tours of Haunted, True Crime, and Dark History places. Narrated like a secret shared after midnight. Coming soon to iOS.
+> GPS-triggered audio tours of Haunted, True Crime, and Dark History places. Narrated like a secret shared after midnight. Out now on iOS.
 
 ## What it is
 Step near a place and its story finds you. No screens to consult. No maps to wrangle. Just the street, and a voice that's been here longer than the buildings. Walk or drive at your own pace; the stories pause when you do and resume when you move on.
@@ -12,18 +12,18 @@ Step near a place and its story finds you. No screens to consult. No maps to wra
 - Designed for self-paced exploration with headphones; not a group-tour replacement.
 
 ## Status
-- Pre-launch. Email waitlist open via Kit.
-- iOS app in development. No public release date.
+- Live on the iOS App Store: APP_STORE_URL_TBD
+- Free to download.
 - No Android version planned for initial launch.
 
-## Cities targeted at launch
+## Cities at launch
 Los Angeles, New Orleans, Chicago, Boston, San Francisco, Savannah, Key West, plus more in development.
 
 ## Best experienced
 After dark. Walking. With headphones. Solo or with one other person.
 
 ## Key Pages
-- [Home](/): waitlist signup + product overview
+- [Home](/): product overview + App Store download
 
 ## Content licensing for AI training
 - Marketing copy on this site: training permitted.
@@ -32,4 +32,4 @@ After dark. Walking. With headphones. Solo or with one other person.
 - Commercial use of brand assets (name, logo, narrator voice): contact required.
 
 ## Contact
-Pre-launch waitlist: form on home page (powered by Kit).
+hello@gethauntapp.com

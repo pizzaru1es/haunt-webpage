@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="google-site-verification" content="DqA2Kn4Ls2said6TQm2aK6h7nf7T6bgzRZ81xobDDDo" />
 <title>Haunt — Every city has stories it doesn't tell tourists</title>
-<meta name="description" content="GPS-triggered audio tours of Haunted, True Crime, and Dark History places. Narrated like a secret shared after midnight. Coming soon to iOS." />
+<meta name="description" content="GPS-triggered audio tours of Haunted, True Crime, and Dark History places. Narrated like a secret shared after midnight. Out now on iOS." />
 <meta name="author" content="Commershill, LLC" />
 
 <meta name="color-scheme" content="dark" />
 <meta name="theme-color" content="#0A0A0F" />
 <meta name="format-detection" content="telephone=no" />
+<meta name="apple-itunes-app" content="app-id=HAUNT_APP_ID_TBD" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="Haunt" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -54,7 +55,7 @@
       "url": "https://gethauntapp.com/",
       "email": "hello@gethauntapp.com",
       "logo": "https://gethauntapp.com/favicon.svg",
-      "description": "GPS-triggered audio tours of Haunted, True Crime, and Dark History places. Narrated like a secret shared after midnight.",
+      "description": "GPS-triggered audio tours of Haunted, True Crime, and Dark History places. Narrated like a secret shared after midnight. Out now on iOS.",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "2108 N St, Ste N",
@@ -79,6 +80,12 @@
       "name": "Haunt",
       "operatingSystem": "iOS",
       "applicationCategory": "TravelApplication",
+      "installUrl": "APP_STORE_URL_TBD",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
       "description": "GPS-triggered audio tours of Haunted, True Crime, and Dark History places. Walk or drive at your own pace; the city's stories surface as you approach them.",
       "publisher": { "@id": "https://gethauntapp.com/#org" },
       "featureList": [
@@ -416,46 +423,43 @@
     margin-bottom: 44px;
   }
 
-  /* ---------- Waitlist form ---------- */
-  .waitlist { max-width: 520px; scroll-margin-top: 100px; }
-  .waitlist form {
+  /* ---------- App Store CTA ---------- */
+  .store-cta {
     display: flex;
-    gap: 10px;
-    padding: 6px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-btn);
-    transition: border-color 180ms, box-shadow 180ms;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    scroll-margin-top: 100px;
   }
-  .waitlist form:focus-within {
-    border-color: var(--amber-60);
-    box-shadow: 0 0 0 3px rgba(232,168,71,0.12);
-  }
-  .waitlist input[type="email"] {
-    flex: 1;
-    background: transparent;
-    border: 0;
-    padding: 14px 14px;
-    font-size: 15px;
-    color: var(--text);
-  }
-  .waitlist input[type="email"]::placeholder { color: var(--muted); }
-  .btn-primary {
+  .store-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
     background: var(--amber);
     color: #15130B;
-    border: 0;
-    font-family: var(--sans);
-    font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 0.01em;
-    padding: 12px 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: filter 180ms, box-shadow 200ms;
+    padding: 14px 28px 14px 24px;
+    border-radius: var(--r-btn);
+    transition: filter 180ms, box-shadow 200ms, transform 200ms;
   }
-  .btn-primary:hover {
+  .store-btn:hover {
     filter: brightness(1.08);
-    box-shadow: 0 0 0 1px rgba(232,168,71,0.4), 0 6px 24px rgba(232,168,71,0.20);
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 1px rgba(232,168,71,0.4), 0 8px 32px rgba(232,168,71,0.25);
+  }
+  .store-btn .apple { width: 24px; height: 24px; flex: none; }
+  .store-btn .lines { text-align: left; line-height: 1.12; }
+  .store-btn .small {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    opacity: 0.78;
+  }
+  .store-btn .big {
+    display: block;
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: -0.01em;
   }
   .form-caption {
     font-family: var(--mono);
@@ -463,26 +467,6 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-top: 14px;
-  }
-
-  /* success state */
-  .waitlist .success {
-    display: none;
-    align-items: center;
-    gap: 14px;
-    padding: 18px 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-btn);
-  }
-  .waitlist.is-success .success { display: flex; }
-  .waitlist.is-success form { display: none; }
-  .waitlist .success .msg {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 18px;
-    color: var(--amber);
   }
 
   /* Trust row */
@@ -765,7 +749,7 @@
     max-width: 480px;
     margin: 0 auto 36px;
   }
-  .final .waitlist { margin: 0 auto 22px; }
+  .final .store-cta { align-items: center; margin: 0 auto 22px; }
   .final .platform {
     font-family: var(--mono);
     font-size: 11px;
@@ -855,9 +839,8 @@
     nav.topnav .nav-inner { padding: 14px 22px; }
     .hero h1 { font-size: 40px; }
     .hero .lede { font-size: 17px; }
-    .waitlist form { flex-direction: column; padding: 8px; gap: 8px; }
-    .waitlist input[type="email"] { padding: 14px 12px; }
-    .btn-primary { width: 100%; padding: 14px; }
+    .store-cta { width: 100%; align-items: stretch; text-align: center; }
+    .store-btn { justify-content: center; }
     .trust { gap: 14px; }
     .trust .sep { display: none; }
     .section-head { margin-bottom: 52px; }
@@ -966,14 +949,14 @@
       </svg>
       <span class="wordmark">Haunt</span>
     </a>
-    <a href="#join" class="nav-cta">
+    <a href="APP_STORE_URL_TBD" rel="noopener" class="nav-cta">
       <span class="sparkle s1"></span>
       <span class="sparkle s2"></span>
       <span class="sparkle s3"></span>
       <span class="sparkle s4"></span>
       <span class="sparkle s5"></span>
       <span class="sparkle s6"></span>
-      Join the waitlist
+      Get the app
     </a>
   </div>
 </nav>
@@ -984,7 +967,7 @@
   <div class="hero-gate" aria-hidden="true"></div>
 
   <div class="wrap hero-inner">
-    <div class="eyebrow reveal">Coming Soon</div>
+    <div class="eyebrow reveal">Now on the App Store</div>
     <h1 class="reveal" style="--d:80ms">
       Every city has stories it doesn't tell <em>tourists</em>.
     </h1>
@@ -992,20 +975,14 @@
       Slip past the guided tours. Haunted, True Crime, and Dark History stories — told like a secret shared after midnight, by a voice that's been here longer than the buildings. Walk or drive, at your own pace.
     </p>
 
-    <div class="waitlist reveal" style="--d:240ms" id="waitlist">
-      <form id="waitlist-form" action="https://app.kit.com/forms/9351770/subscriptions" method="POST" novalidate>
-        <input type="email" name="email_address" required placeholder="your@email.com" autocomplete="email" aria-label="Email address" />
-        <button class="btn-primary" type="submit">Notify me</button>
-      </form>
-      <div class="success" role="status" aria-live="polite">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 2C7.58 2 4 5.58 4 10v10.5c0 .83.67 1.5 1.5 1.5s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.5-.67 1.5-1.5V10c0-4.42-3.58-8-8-8z" fill="#E8A847" opacity="0.9"/>
-          <circle cx="9" cy="11" r="1.5" fill="#0A0A0F"/>
-          <circle cx="15" cy="11" r="1.5" fill="#0A0A0F"/>
+    <div class="store-cta reveal" style="--d:240ms" id="download">
+      <a class="store-btn" href="APP_STORE_URL_TBD" rel="noopener" aria-label="Download Haunt on the App Store">
+        <svg class="apple" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
+          <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
         </svg>
-        <div class="msg">We'll let you know. Good night.</div>
-      </div>
-      <div class="form-caption">No spam. You may think we ghosted you.</div>
+        <span class="lines"><span class="small">Download on the</span><span class="big">App Store</span></span>
+      </a>
+      <div class="form-caption">Free to download · iOS</div>
     </div>
 
     <div class="trust reveal" style="--d:320ms">
@@ -1161,26 +1138,19 @@
         <circle cx="9" cy="11" r="1.5" fill="#0A0A0F"/>
         <circle cx="15" cy="11" r="1.5" fill="#0A0A0F"/>
       </svg>
-      <h2>Be first through the door.</h2>
-      <p class="sub">Leave your email. We'll knock once.</p>
+      <h2>The door is open.</h2>
+      <p class="sub">The stories are waiting where they happened. Step outside after dark.</p>
 
-      <div class="waitlist">
-        <form id="waitlist-form-2" action="https://app.kit.com/forms/9351770/subscriptions" method="POST" novalidate>
-          <input type="email" name="email_address" required placeholder="your@email.com" autocomplete="email" aria-label="Email address" />
-          <button class="btn-primary" type="submit">Notify me</button>
-        </form>
-        <div class="success" role="status" aria-live="polite">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M12 2C7.58 2 4 5.58 4 10v10.5c0 .83.67 1.5 1.5 1.5s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.5-.67 1.5-1.5V10c0-4.42-3.58-8-8-8z" fill="#E8A847" opacity="0.9"/>
-            <circle cx="9" cy="11" r="1.5" fill="#0A0A0F"/>
-            <circle cx="15" cy="11" r="1.5" fill="#0A0A0F"/>
+      <div class="store-cta">
+        <a class="store-btn" href="APP_STORE_URL_TBD" rel="noopener" aria-label="Download Haunt on the App Store">
+          <svg class="apple" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
+            <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
           </svg>
-          <div class="msg">We'll let you know. Good night.</div>
-        </div>
-        <div class="form-caption">No spam. You may think we ghosted you.</div>
+          <span class="lines"><span class="small">Download on the</span><span class="big">App Store</span></span>
+        </a>
       </div>
 
-      <div class="platform">Coming soon</div>
+      <div class="platform">iOS <span class="sep">·</span> Free to download <span class="sep">·</span> Headphones recommended</div>
     </div>
   </div>
 </section>
@@ -1544,53 +1514,6 @@
       });
     }, { threshold: 0.14, rootMargin: '0px 0px -40px 0px' });
     els.forEach(el => io.observe(el));
-  })();
-
-  // Waitlist forms — submit to Kit, show inline success
-  (function () {
-    function shake(form) {
-      form.animate(
-        [{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(0)' }],
-        { duration: 260, easing: 'ease-out' }
-      );
-    }
-    function wire(formId) {
-      const form = document.getElementById(formId);
-      if (!form) return;
-      const wrap = form.closest('.waitlist');
-      const input = form.querySelector('input[type="email"]');
-      const button = form.querySelector('button[type="submit"]');
-      form.addEventListener('submit', async (e) => {
-        const val = (input.value || '').trim();
-        const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
-        if (!ok) {
-          e.preventDefault();
-          input.focus();
-          shake(form);
-          return;
-        }
-        e.preventDefault();
-        button.disabled = true;
-        const originalLabel = button.textContent;
-        button.textContent = 'Sending…';
-        try {
-          const res = await fetch(form.action, {
-            method: 'POST',
-            body: new FormData(form),
-            headers: { 'Accept': 'application/json' }
-          });
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          wrap.classList.add('is-success');
-        } catch (err) {
-          // Fall back to native form submit (CSP allows form-action to Kit)
-          button.textContent = originalLabel;
-          button.disabled = false;
-          form.submit();
-        }
-      });
-    }
-    wire('waitlist-form');
-    wire('waitlist-form-2');
   })();
 
   // Peek ghost — rises once, tracks cursor, idle-glances, ducks out (or bolts on fast scroll)
