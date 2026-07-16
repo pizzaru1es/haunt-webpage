@@ -16,8 +16,11 @@ Step near a place and its story finds you. No screens to consult. No maps to wra
 - Free to download.
 - No Android version planned for initial launch.
 
-## Cities at launch
-Los Angeles, New Orleans, Chicago, Boston, San Francisco, Savannah, Key West, plus more in development.
+## Tours available now
+Baltimore, Maryland; Boston, Massachusetts; Charleston, South Carolina; Chicago, Illinois; Gettysburg, Pennsylvania; Key West, Florida; Los Angeles, California; Salem, Massachusetts; San Francisco, California; Savannah, Georgia; St. Augustine, Florida; Tampa, Florida.
+
+## Coming soon
+New Orleans, Louisiana; New York City, New York; San Antonio, Texas.
 
 ## Best experienced
 After dark. Walking. With headphones. Solo or with one other person.
