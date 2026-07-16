@@ -12,7 +12,7 @@ Step near a place and its story finds you. No screens to consult. No maps to wra
 - Designed for self-paced exploration with headphones; not a group-tour replacement.
 
 ## Status
-- Live on the iOS App Store: APP_STORE_URL_TBD
+- Live on the iOS App Store: https://apps.apple.com/us/app/haunt-ghost-tours/id6760312968
 - Free to download.
 - No Android version planned for initial launch.
 
