@@ -1,0 +1,52 @@
+{
+  "profile": {
+    "handle": "@hauntghosttours",
+    "display_name": "Haunt | GPS Ghost Tours",
+    "bio": "Cinematic self-guided haunted-history walks. 12 cities. Every tour starts free on iPhone. ↓",
+    "contact": "support@gethauntapp.com",
+    "link": "https://apps.apple.com/us/app/haunt-ghost-tours/id6760312968"
+  },
+  "launch": {
+    "eyebrow": "Now on iPhone",
+    "headline": "HAUNT\nIS LIVE.",
+    "subhead": "Walk. Arrive. Listen.",
+    "body": "Cinematic ghost tours\nthat begin where the\nstory happened.",
+    "cta": "FIRST STOP FREE"
+  },
+  "cities": {
+    "eyebrow": "Choose your city",
+    "headline": "12 CITIES.",
+    "items": [
+      "Boston",
+      "Salem",
+      "Savannah",
+      "Charleston",
+      "St. Augustine",
+      "Key West",
+      "Tampa",
+      "Baltimore",
+      "Los Angeles",
+      "San Francisco",
+      "Chicago",
+      "Gettysburg"
+    ],
+    "footer": "EVERY TOUR STARTS FREE • AVAILABLE ON IPHONE"
+  },
+  "trust": {
+    "eyebrow": "Designed for real places",
+    "headline": "BUILT FOR\nTHE WALK.",
+    "items": [
+      {"title": "NO ADS."},
+      {"title": "NO TRACKING."},
+      {"title": "YOUR LOCATION STAYS ON YOUR DEVICE.", "detail": "Used for the tour experience—not an ad profile."}
+    ],
+    "safety_title": "EXPLORE RESPONSIBLY",
+    "safety_body": "Respect posted hours, private property, closures, traffic, and residential quiet."
+  },
+  "highlights": [
+    {"label": "Start Here", "glyph": "START", "filename": "start-here.png"},
+    {"label": "Cities", "glyph": "CITIES", "filename": "cities.png"},
+    {"label": "How It Works", "glyph": "HOW", "filename": "how-it-works.png"},
+    {"label": "Safety", "glyph": "SAFETY", "filename": "safety.png"}
+  ]
+}
