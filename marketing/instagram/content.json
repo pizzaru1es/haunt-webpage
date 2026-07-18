@@ -2,7 +2,7 @@
   "profile": {
     "handle": "@hauntghosttours",
     "display_name": "Haunt | GPS Ghost Tours",
-    "bio": "Cinematic self-guided haunted-history walks. 12 cities. Every tour starts free on iPhone. ↓",
+    "bio": "Cinematic self-guided haunted-history walks. 12 launch cities—and growing. First stop free on iPhone. ↓",
     "contact": "support@gethauntapp.com",
     "link": "https://apps.apple.com/us/app/haunt-ghost-tours/id6760312968"
   },
@@ -14,7 +14,7 @@
     "cta": "FIRST STOP FREE"
   },
   "cities": {
-    "eyebrow": "Choose your city",
+    "eyebrow": "At launch",
     "headline": "12 CITIES.",
     "items": [
       "Boston",
@@ -30,7 +30,7 @@
       "Chicago",
       "Gettysburg"
     ],
-    "footer": "EVERY TOUR STARTS FREE • AVAILABLE ON IPHONE"
+    "footer": "MORE ALREADY ON THE WAY."
   },
   "trust": {
     "eyebrow": "Designed for real places",

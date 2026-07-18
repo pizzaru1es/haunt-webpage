@@ -65,6 +65,22 @@ def fit_text(draw: ImageDraw.ImageDraw, text: str, max_width: int, start_size: i
     return font(size, serif=serif, bold=bold)
 
 
+def centered_text(
+    draw: ImageDraw.ImageDraw,
+    box: tuple[int, int, int, int],
+    text: str,
+    *,
+    fill: str,
+    selected_font: ImageFont.FreeTypeFont,
+) -> None:
+    """Draw text optically centered in a rectangular container."""
+    x0, y0, x1, y1 = box
+    left, top, right, bottom = draw.textbbox((0, 0), text, font=selected_font)
+    x = x0 + ((x1 - x0) - (right - left)) / 2 - left
+    y = y0 + ((y1 - y0) - (bottom - top)) / 2 - top
+    draw.text((round(x), round(y)), text, fill=fill, font=selected_font)
+
+
 def rounded_screen(path: Path, width: int, height: int, radius: int = 42) -> Image.Image:
     source = Image.open(path).convert("RGB")
     source.thumbnail((width, height), Image.Resampling.LANCZOS)
@@ -164,8 +180,9 @@ def render_launch(copy: dict) -> Image.Image:
     draw.rounded_rectangle((607, 102, 1043, 1040), radius=54, outline=AMBER, width=3)
 
     draw.text((72, 690), copy["launch"]["body"], fill=CREAM, font=font(36, serif=True), spacing=9)
-    draw.rounded_rectangle((70, 938, 488, 1007), radius=34, fill=AMBER)
-    draw.text((103, 954), copy["launch"]["cta"], fill=INK, font=font(27, bold=True))
+    cta_box = (70, 938, 488, 1007)
+    draw.rounded_rectangle(cta_box, radius=34, fill=AMBER)
+    centered_text(draw, cta_box, copy["launch"]["cta"], fill=INK, selected_font=font(27, bold=True))
     return image.convert("RGB")
 
 
@@ -235,8 +252,9 @@ def render_story(copy: dict) -> Image.Image:
     image.paste(screen, (445, 640), screen)
     draw = ImageDraw.Draw(image)
     draw.multiline_text((72, 760), copy["launch"]["body"], fill=CREAM, font=font(55, serif=True), spacing=12)
-    draw.rounded_rectangle((70, 1575, 430, 1658), radius=41, fill=AMBER)
-    draw.text((111, 1596), copy["launch"]["cta"], fill=INK, font=font(31, bold=True))
+    cta_box = (70, 1575, 430, 1658)
+    draw.rounded_rectangle(cta_box, radius=41, fill=AMBER)
+    centered_text(draw, cta_box, copy["launch"]["cta"], fill=INK, selected_font=font(31, bold=True))
     draw.text((72, 1730), "@hauntghosttours", fill=MUTED, font=font(28, bold=True))
     return image
 

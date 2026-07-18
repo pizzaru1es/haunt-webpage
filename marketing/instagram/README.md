@@ -8,48 +8,39 @@ This kit turns the existing Haunt launch strategy into a usable first profile. I
 - Display name: `Haunt | GPS Ghost Tours`
 - Account type: public professional/business account
 - Category: `Travel Service` (showing the category is optional)
-- Profile photo: `exports/profile-photo-primary.png` (recommended) or `exports/profile-photo-inverted.png`
-- Bio: `Cinematic self-guided haunted-history walks. 12 cities. Every tour starts free on iPhone. ↓`
+- Profile photo: `exports/profile-photo-inverted.png` (recommended for small-size clarity) or `exports/profile-photo-primary.png`
+- Bio: `Cinematic self-guided haunted-history walks. 12 launch cities—and growing. First stop free on iPhone. ↓`
 - Link: `https://apps.apple.com/us/app/haunt-ghost-tours/id6760312968`
 - Contact: `support@gethauntapp.com`
 - Security: turn on two-factor authentication and store recovery codes in the password manager
 
 Replace the direct App Store URL with an App Store Connect campaign link when available. Use one campaign token per platform × month × content family, such as `ig_jul_product`.
 
-## Publish the first row
+## Publish the starter set
 
-The desired visible row is:
+Start with two feed posts:
 
-`01 launch/how it works` | `02 twelve cities` | `03 trust/privacy`
+`01 launch/how it works` | `02 cities at launch`
 
-Because Instagram places the newest post at the left, publish in this order:
+Because Instagram places the newest post at the left, publish the cities post first:
 
-1. `exports/posts/03-trust-privacy.png`
-2. `exports/posts/02-twelve-cities.png`
-3. `exports/posts/01-launch-how-it-works.png`
-4. Pin all three.
+1. `exports/posts/02-twelve-cities.png`
+2. `exports/posts/01-launch-how-it-works.png`
+3. Pin both.
 
-### Post 1 — Trust/privacy (publish first)
+Before sharing, use Instagram's preview controls to verify that the square artwork fits the profile-grid thumbnail without cropping either edge.
 
-Caption:
-
-> A ghost tour should know where the next story begins—not build an ad profile around everywhere you go. Haunt has no ads and no tracking, and your location stays on your device. When you walk, keep headphones low, respect posted hours and private property, and stay aware of traffic and your surroundings. Safety and privacy are part of the experience, not fine print. #HauntGhostTours #GhostTour #TravelApp
-
-Alt text:
-
-> Black and amber Haunt graphic reading “Built for the walk,” with the statements “No ads,” “No tracking,” and “Your location stays on your device,” plus a responsible-exploration reminder.
-
-### Post 2 — Cities (publish second)
+### Post 1 — Cities at launch (publish first)
 
 Caption:
 
-> Twelve cities. Stories hiding in plain sight. Explore Boston, Salem, Savannah, Charleston, St. Augustine, Key West, Tampa, Baltimore, Los Angeles, San Francisco, Chicago, and Gettysburg. Every tour's introduction and first stop are free on iPhone. Which city should we walk first? #HauntGhostTours #HauntedHistory #GhostTours
+> Haunt launches in 12 cities: Boston, Salem, Savannah, Charleston, St. Augustine, Key West, Tampa, Baltimore, Los Angeles, San Francisco, Chicago, and Gettysburg. This is the starting map—not the final one. New Orleans, New York City, and San Antonio are already coming soon, with more cities added as new tours are ready. Where should Haunt go next? #HauntGhostTours #HauntedHistory #GhostTours
 
 Alt text:
 
-> Amber Haunt graphic listing the twelve launch cities: Boston, Salem, Savannah, Charleston, St. Augustine, Key West, Tampa, Baltimore, Los Angeles, San Francisco, Chicago, and Gettysburg.
+> Amber Haunt graphic reading “At launch” and “12 cities,” listing Boston, Salem, Savannah, Charleston, St. Augustine, Key West, Tampa, Baltimore, Los Angeles, San Francisco, Chicago, and Gettysburg, and stating that more cities are already on the way.
 
-### Post 3 — Launch/how it works (publish last)
+### Post 2 — Launch/how it works (publish second)
 
 Caption:
 
@@ -59,10 +50,22 @@ Alt text:
 
 > Black and amber Haunt launch graphic reading “Haunt is live” and “Walk. Arrive. Listen.” beside a real in-app tour screen showing Haunted Hollywood, a route map, and narration controls.
 
+### Hold for later — Trust/privacy
+
+`exports/posts/03-trust-privacy.png` is useful supporting content, but its safety and privacy detail is dense for a brand-new profile. Publish it later as part of a focused privacy or responsible-exploration sequence rather than using it as launch-day filler.
+
+Caption:
+
+> A ghost tour should know where the next story begins—not build an ad profile around everywhere you go. Haunt has no ads and no tracking, and your location stays on your device. When you walk, keep headphones low, respect posted hours and private property, and stay aware of traffic and your surroundings. Safety and privacy are part of the experience, not fine print. #HauntGhostTours #GhostTour #TravelApp
+
+Alt text:
+
+> Black and amber Haunt graphic reading “Built for the walk,” with the statements “No ads,” “No tracking,” and “Your location stays on your device,” plus a responsible-exploration reminder.
+
 ## Stories and highlights
 
-- Post `exports/stories/launch-story.png` on launch day with the App Store link sticker.
-- Add four story groups, then use the matching covers in `exports/highlights/`: `Start Here`, `Cities`, `How It Works`, and `Safety`.
+- The two feed posts and profile photo are enough to establish the account. Add `exports/stories/launch-story.png` when you are ready to place and verify the App Store link sticker in Instagram.
+- Start with one `Start Here` Highlight. Add `Cities`, `How It Works`, and `Safety` only after each has enough useful Story frames to justify the section.
 - Add `Reviews` only after genuine customer reviews exist.
 
 ## The next 30 days
