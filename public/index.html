@@ -786,7 +786,7 @@
   }
   .countdown-units {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
   .countdown-unit {
     display: flex;
@@ -1251,6 +1251,10 @@
           <span class="countdown-value" data-countdown="minutes">—</span>
           <span class="countdown-label">Minutes</span>
         </span>
+        <span class="countdown-unit">
+          <span class="countdown-value" data-countdown="seconds">—</span>
+          <span class="countdown-label">Seconds</span>
+        </span>
       </div>
     </div>
     <a href="#top" class="brand">
@@ -1280,7 +1284,8 @@
     const days = countdown.querySelector('[data-countdown="days"]');
     const hours = countdown.querySelector('[data-countdown="hours"]');
     const minutes = countdown.querySelector('[data-countdown="minutes"]');
-    if (!title || !days || !hours || !minutes) return;
+    const seconds = countdown.querySelector('[data-countdown="seconds"]');
+    if (!title || !days || !hours || !minutes || !seconds) return;
 
     function updateCountdown() {
       const now = new Date();
@@ -1290,6 +1295,7 @@
         days.textContent = '0';
         hours.textContent = '0';
         minutes.textContent = '0';
+        seconds.textContent = '0';
         countdown.setAttribute('aria-label', 'It’s Halloween');
         return;
       }
@@ -1297,18 +1303,20 @@
       let halloween = new Date(now.getFullYear(), 9, 31);
       if (now > halloween) halloween = new Date(now.getFullYear() + 1, 9, 31);
 
-      const totalMinutes = Math.ceil((halloween - now) / 60000);
-      const remainingDays = Math.floor(totalMinutes / 1440);
-      const remainingHours = Math.floor((totalMinutes % 1440) / 60);
-      const remainingMinutes = totalMinutes % 60;
+      const totalSeconds = Math.ceil((halloween - now) / 1000);
+      const remainingDays = Math.floor(totalSeconds / 86400);
+      const remainingHours = Math.floor((totalSeconds % 86400) / 3600);
+      const remainingMinutes = Math.floor((totalSeconds % 3600) / 60);
+      const remainingSeconds = totalSeconds % 60;
 
       title.textContent = 'It’s almost Halloween';
       days.textContent = String(remainingDays);
       hours.textContent = String(remainingHours);
       minutes.textContent = String(remainingMinutes);
+      seconds.textContent = String(remainingSeconds);
       countdown.setAttribute(
         'aria-label',
-        `It’s almost Halloween: ${remainingDays} days, ${remainingHours} hours, and ${remainingMinutes} minutes remaining`
+        `It’s almost Halloween: ${remainingDays} days, ${remainingHours} hours, ${remainingMinutes} minutes, and ${remainingSeconds} seconds remaining`
       );
     }
 
