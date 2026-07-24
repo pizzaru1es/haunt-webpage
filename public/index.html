@@ -764,6 +764,55 @@
     padding: 64px 0 72px;
     text-align: center;
   }
+  .halloween-countdown {
+    max-width: 560px;
+    margin: 0 auto 48px;
+    padding: 28px 24px 26px;
+    border: 1px solid rgba(232, 168, 71, 0.22);
+    border-radius: var(--r-card);
+    background: rgba(19, 19, 26, 0.55);
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.18);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  .countdown-title {
+    margin-bottom: 20px;
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 24px;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .countdown-units {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .countdown-unit {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0 18px;
+  }
+  .countdown-unit + .countdown-unit {
+    border-left: 1px solid var(--border);
+  }
+  .countdown-value {
+    color: var(--amber);
+    font-family: var(--mono);
+    font-size: clamp(25px, 4vw, 34px);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .countdown-label {
+    color: var(--dim);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
   footer .brand { justify-content: center; margin-bottom: 22px; }
   footer .links {
     display: flex; gap: 22px; justify-content: center;
@@ -844,6 +893,12 @@
     .trust { gap: 14px; }
     .trust .sep { display: none; }
     .section-head { margin-bottom: 52px; }
+    .halloween-countdown {
+      margin-bottom: 42px;
+      padding: 24px 12px 22px;
+    }
+    .countdown-title { font-size: 21px; }
+    .countdown-unit { padding: 0 8px; }
   }
 
   /* ---------- Peek ghost (desktop-only beckon) ---------- */
@@ -1181,6 +1236,23 @@
 <!-- ---------- Footer ---------- -->
 <footer>
   <div class="wrap">
+    <div class="halloween-countdown" id="halloween-countdown">
+      <p class="countdown-title">It’s almost Halloween</p>
+      <div class="countdown-units" aria-hidden="true">
+        <span class="countdown-unit">
+          <span class="countdown-value" data-countdown="days">—</span>
+          <span class="countdown-label">Days</span>
+        </span>
+        <span class="countdown-unit">
+          <span class="countdown-value" data-countdown="hours">—</span>
+          <span class="countdown-label">Hours</span>
+        </span>
+        <span class="countdown-unit">
+          <span class="countdown-value" data-countdown="minutes">—</span>
+          <span class="countdown-label">Minutes</span>
+        </span>
+      </div>
+    </div>
     <a href="#top" class="brand">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M12 2C7.58 2 4 5.58 4 10v10.5c0 .83.67 1.5 1.5 1.5s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.1-.47 1.4-.8c.3-.33.7-.7 1.1-.7s.8.37 1.1.7c.3.33.7.8 1.4.8s1.5-.67 1.5-1.5V10c0-4.42-3.58-8-8-8z" fill="#E8A847" opacity="0.9"/>
@@ -1199,6 +1271,51 @@
 </footer>
 
 <script>
+  // Halloween countdown — midnight on October 31 in the visitor's local time
+  (function () {
+    const countdown = document.getElementById('halloween-countdown');
+    if (!countdown) return;
+
+    const title = countdown.querySelector('.countdown-title');
+    const days = countdown.querySelector('[data-countdown="days"]');
+    const hours = countdown.querySelector('[data-countdown="hours"]');
+    const minutes = countdown.querySelector('[data-countdown="minutes"]');
+    if (!title || !days || !hours || !minutes) return;
+
+    function updateCountdown() {
+      const now = new Date();
+
+      if (now.getMonth() === 9 && now.getDate() === 31) {
+        title.textContent = 'Happy Halloween';
+        days.textContent = '0';
+        hours.textContent = '0';
+        minutes.textContent = '0';
+        countdown.setAttribute('aria-label', 'Happy Halloween');
+        return;
+      }
+
+      let halloween = new Date(now.getFullYear(), 9, 31);
+      if (now > halloween) halloween = new Date(now.getFullYear() + 1, 9, 31);
+
+      const totalMinutes = Math.ceil((halloween - now) / 60000);
+      const remainingDays = Math.floor(totalMinutes / 1440);
+      const remainingHours = Math.floor((totalMinutes % 1440) / 60);
+      const remainingMinutes = totalMinutes % 60;
+
+      title.textContent = 'It’s almost Halloween';
+      days.textContent = String(remainingDays);
+      hours.textContent = String(remainingHours);
+      minutes.textContent = String(remainingMinutes);
+      countdown.setAttribute(
+        'aria-label',
+        `It’s almost Halloween: ${remainingDays} days, ${remainingHours} hours, and ${remainingMinutes} minutes remaining`
+      );
+    }
+
+    updateCountdown();
+    window.setInterval(updateCountdown, 1000);
+  })();
+
   // Nav solidify on scroll
   (function () {
     const nav = document.getElementById('topnav');
