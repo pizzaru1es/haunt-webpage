@@ -33,6 +33,22 @@ export default {
       return Response.redirect(dest, 302);
     }
 
+    // Existing app shares use /tours/<id>, but tour web pages do not exist yet.
+    // Send browsers to the HTML landing page and its App Store link. Keep this
+    // temporary and uncached so future tour pages can replace the fallback.
+    if (
+      (request.method === 'GET' || request.method === 'HEAD') &&
+      /^\/tours\/[^/]+$/.test(path)
+    ) {
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: new URL('/', url).toString(),
+          'Cache-Control': 'no-store',
+        },
+      });
+    }
+
     return env.ASSETS.fetch(request);
   },
 };
